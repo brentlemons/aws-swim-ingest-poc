@@ -30,7 +30,7 @@ public class SCDSMessageConsumer implements MessageListener {
 			if (message instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) message;
 				String msgTextObj = txtMsg.getText();
-				logger.debug("message: " + msgTextObj);
+				logger.info("message: " + msgTextObj);
 			}
 
 		} catch (JMSException ex) {

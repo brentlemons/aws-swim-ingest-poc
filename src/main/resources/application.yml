@@ -1,0 +1,10 @@
+swim:
+    jndi:
+        context_factory: com.solacesystems.jndi.SolJNDIInitialContextFactory
+        host: tcps://add.your.host:12345
+        principal: add.your.principal
+        credentials: add.your.credentials
+        vpn: add.your.vpn
+    jms:
+        connection_factory_name: add.your.CF
+        queue_name: add.your.queue.OUT

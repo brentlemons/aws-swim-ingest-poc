@@ -1,0 +1,42 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.awsproserve'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+    implementation group: 'org.springframework', name:'spring-jms'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+
+	implementation group: 'com.solacesystems', name: 'sol-jms', version: '10.6.4'
+	implementation group: 'com.solacesystems', name: 'sol-jcsmp', version: '10.6.4'
+
+
+//    implementation name: 'sol-jms-7.1.2.226'
+//    implementation name: 'sol-jcsmp-7.1.2.226'
+//    implementation name: 'sol-common-7.1.2.226'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtime
+    }
+}
+
+build.dependsOn buildZip

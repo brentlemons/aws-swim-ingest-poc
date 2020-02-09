@@ -12,6 +12,9 @@ import org.springframework.jms.core.JmsTemplate;
 
 import org.springframework.jndi.JndiTemplate;
 
+import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
+import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
+import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
 import com.awsproserve.swim.ingest.SCDSMessageConsumer;
 
 import org.springframework.jndi.JndiObjectFactoryBean;
@@ -28,6 +31,10 @@ import org.springframework.beans.factory.annotation.Value;
 @Configuration
 public class JMSConfig {
 
+//    @Value("${ssm.config-root}") String configRoot;
+
+//	AWSSimpleSystemsManagement ssm = null;	
+    
     @Value("${swim.jndi.context_factory}") String jndiContextFactory;
     @Value("${swim.jndi.host}") String jndiHost;
     @Value("${swim.jndi.principal}") String jndiPrincipal;
@@ -37,15 +44,29 @@ public class JMSConfig {
     @Value("${swim.jms.connection_factory_name}") String jmsCfName;
     @Value("${swim.jms.queue_name}") String jmsQueueName;
 
+//	public JMSConfig() {
+//		
+//		/**
+//		* Initialize AWS System Manager Client with default credentials
+//		*/
+////		ssm = AWSSimpleSystemsManagementClientBuilder.defaultClient();
+//		
+//	}
+
     @Bean
     public JndiTemplate solaceJndiTemplate() {
         JndiTemplate jndiTemplate = new JndiTemplate();
         Properties jndiProps = new Properties();
 
+//        jndiProps.setProperty("java.naming.factory.initial", getParameter(configRoot + "/jndi/context_factory"));
+//        jndiProps.setProperty("java.naming.provider.url", getParameter(configRoot + "/jndi/host")); // t3://serverAddress:port  ---smf://___IP:PORT___
+//        jndiProps.setProperty("java.naming.security.principal", getParameter(configRoot + "/jndi/principal")); // injected from properties file username   ---spring_user@Solace_Spring_VPN
+//        jndiProps.setProperty("java.naming.security.credentials", getParameter(configRoot + "/jndi/credentials")); //injected from properties file password  ---spring_password
+//        jndiProps.setProperty("Solace_JMS_VPN", getParameter(configRoot + "/jndi/vpn"));
         jndiProps.setProperty("java.naming.factory.initial", jndiContextFactory);
-        jndiProps.setProperty("java.naming.provider.url", jndiHost); // t3://serverAddress:port  ---smf://___IP:PORT___
-        jndiProps.setProperty("java.naming.security.principal", jndiPrincipal); // injected from properties file username   ---spring_user@Solace_Spring_VPN
-        jndiProps.setProperty("java.naming.security.credentials", jndiCredentials); //injected from properties file password  ---spring_password
+        jndiProps.setProperty("java.naming.provider.url", jndiHost);
+        jndiProps.setProperty("java.naming.security.principal", jndiPrincipal);
+        jndiProps.setProperty("java.naming.security.credentials", jndiCredentials);
         jndiProps.setProperty("Solace_JMS_VPN", jndiVpn);
 
         jndiTemplate.setEnvironment(jndiProps);
@@ -59,7 +80,8 @@ public class JMSConfig {
 
 
         jndiObjectFactoryBean.setJndiTemplate(solaceJndiTemplate());
-        jndiObjectFactoryBean.setJndiName(jmsCfName); // connectionFactory name.  --JNDI/CF/spring
+//        jndiObjectFactoryBean.setJndiName(getParameter(configRoot + "/jms/connection_factory_name")); // connectionFactory name.  --JNDI/CF/spring
+        jndiObjectFactoryBean.setJndiName(jmsCfName);
 
         return jndiObjectFactoryBean;
     }
@@ -76,7 +98,8 @@ public class JMSConfig {
         JndiObjectFactoryBean jndiObjectFactoryBean = new JndiObjectFactoryBean();
 
         jndiObjectFactoryBean.setJndiTemplate(solaceJndiTemplate());
-        jndiObjectFactoryBean.setJndiName(jmsQueueName); //queue name  --JNDI/Q/requests
+//        jndiObjectFactoryBean.setJndiName(getParameter(configRoot + "/jms/queue_name")); //queue name  --JNDI/Q/requests
+        jndiObjectFactoryBean.setJndiName(jmsQueueName);
 
         return jndiObjectFactoryBean;
     }
@@ -111,4 +134,17 @@ public class JMSConfig {
 
         return defaultMessageListenerContainer;
     }
+    
+//    /**
+//    * Helper method to retrieve SSM Parameter's value
+//    * @param parameterName identifier of the SSM Parameter
+//    * @return decrypted parameter value
+//    */
+//    public String getParameter(String parameterName) {
+//    	System.out.println("==> " + parameterName);
+//        GetParameterRequest request = new GetParameterRequest();
+//        request.setName(parameterName);
+//        request.setWithDecryption(true);
+//        return ssm.getParameter(request).getParameter().getValue();
+//    }
 } 

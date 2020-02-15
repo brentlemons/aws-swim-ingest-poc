@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Template describing the service infrastructure
+
+#Parameters:
+#  CodeCommitRepoName:
+#    Type: String
+
+Resources:
+  IamRoles:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: roles.yaml

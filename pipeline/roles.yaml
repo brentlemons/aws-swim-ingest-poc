@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template for the CodePipeline resources
+
+Resources:
+
+  MyECSServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: MyECSAccessParameters
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'ssm:GetParameters'
+                Effect: Allow
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes*'
+
+#  CodeBuildServiceRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+##      ManagedPolicyArns:
+##        - 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser'
+##        - 'arn:aws:iam::aws:policy/AWSCodeCommitPowerUser'
+#      AssumeRolePolicyDocument:
+#        Version: '2012-10-17'
+#        Statement:
+#        - Action: sts:AssumeRole
+#          Effect: Allow
+#          Principal:
+#            Service: codebuild.amazonaws.com
+#      Path: /
+#      Policies:
+#        - PolicyName: CodeBuildAccess
+#          PolicyDocument:
+#            Version: '2012-10-17'
+#            Statement:
+#              - Action:
+#                - 'logs:CreateLogGroup'
+#                - 'logs:CreateLogStream'
+#                - 'logs:PutLogEvents'
+#                Effect: Allow
+#                Resource: '*'
+#              - Action:
+#                - s3:PutObject
+#                - s3:GetObject
+#                - s3:GetObjectVersion
+#                Effect: Allow
+#                Resource: !Sub 'arn:aws:s3:::*/*'
+##              - Action:
+##                - cloudformation:*
+##                Effect: Allow
+##                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*/*'
+
+#Outputs:
+
+#  ArtifactBucketName:
+#    Value: !Ref ArtifactBucketName
+#    Export:
+#      Name: !Sub ${AWS::StackName}-ArtifactBucketName
+
+#  CodePipelineServiceRoleArn:
+#    Value: !GetAtt CodePipelineServiceRole.Arn
+#    Export:
+#      Name: !Sub ${AWS::StackName}-CodePipelineServiceRoleArn
+
+#  CodeBuildServiceRoleArn:
+#    Value: !GetAtt CodeBuildServiceRole.Arn
+#    Export:
+#      Name: !Sub ${AWS::StackName}-CodeBuildServiceRoleArn

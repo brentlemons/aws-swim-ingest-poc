@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template to create a new ECS Fargate First Run stack
+Parameters:
+  AvailabilityZone:
+    Description: The preferred AvailabilityZone.
+    Type: String
+    Default: ''
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.76.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+      - Key: Name
+        Value: !Sub '${AWS::StackName}-vpc'
+        
+  bklSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow connections from specified CIDR ranges
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+      - IpProtocol: -1
+        CidrIp: 10.76.3.0/24
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.76.3.0/24
+#      AvailabilityZone: !Ref AvailabilityZone
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${AWS::StackName}-public-subnet'
+
+
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: !Sub '${AWS::StackName}-internet-gateway'
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  MyECSServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: MyECSAccessParameters
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'ssm:GetParameters'
+                Effect: Allow
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes*'
+
+  bklClusterFromCF:
+    Type: AWS::ECS::Cluster
+
+  bklTaskDefinitionFromCF:
+    Type: AWS::ECS::TaskDefinition
+    Properties: 
+      RequiresCompatibilities: 
+        - 'FARGATE'
+      ContainerDefinitions: 
+        - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
+          Image: !Sub '247395643054.dkr.ecr.us-east-1.amazonaws.com/swim-testing'
+          Essential: 'true'
+          Memory: '300'
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+              awslogs-group: !Sub '/ecs/bkl-test'
+              awslogs-region: 'us-east-1'
+              awslogs-stream-prefix: 'ecs'
+          Secrets:
+            - Name: SWIM_JNDI_CONTEXT_FACTORY
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/context_factory'
+            - Name: SWIM_JNDI_HOST
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/host'
+            - Name: SWIM_JNDI_PRINCIPAL
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/principal'
+            - Name: SWIM_JNDI_CREDENTIALS
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/credentials'
+            - Name: SWIM_JNDI_VPN
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/vpn'
+            - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/connection_factory_name'
+            - Name: SWIM_JMS_QUEUE_NAME
+              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
+      TaskRoleArn: !Ref MyECSServiceRole
+      ExecutionRoleArn: !Ref MyECSServiceRole
+      Memory: '2GB'
+      Cpu: '1 vCPU'
+      NetworkMode: 'awsvpc'
+#      Family: String
+#      InferenceAccelerators: 
+#        - InferenceAccelerator
+#      IpcMode: String
+#      PidMode: String
+#      PlacementConstraints: 
+#        - TaskDefinitionPlacementConstraint
+#      ProxyConfiguration: 
+#        ProxyConfiguration
+#      Tags: 
+#        - Tag
+#      Volumes: 
+#        - Volume
+
+  bklSwimService:
+    Type: AWS::ECS::Service
+    Properties: 
+      Cluster: !Ref bklClusterFromCF
+      LaunchType: 'FARGATE'
+      TaskDefinition: !Ref bklTaskDefinitionFromCF
+      ServiceName: !Sub 'brentkl-service'
+      DesiredCount: 1
+      DeploymentController: 
+        Type: 'ECS'
+#      Role: !Ref MyECSServiceRole
+      NetworkConfiguration: 
+        AwsvpcConfiguration:
+          AssignPublicIp: 'ENABLED'
+          Subnets: 
+            - !Ref PublicSubnet
+          SecurityGroups: 
+            - !Ref bklSecurityGroup
+
+#      PlatformVersion: String
+#      DeploymentConfiguration: 
+#        DeploymentConfiguration
+#      EnableECSManagedTags: Boolean
+#      HealthCheckGracePeriodSeconds: Integer
+#      LoadBalancers: 
+#        - LoadBalancer
+#      PlacementConstraints: 
+#        - PlacementConstraint
+#      PlacementStrategies: 
+#        - PlacementStrategy
+#      PropagateTags: String
+#      SchedulingStrategy: String
+#      ServiceRegistries: 
+#        - ServiceRegistry
+#      Tags: 
+#        - Tag
+
+
+
+#Outputs:

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:fb="http://www.fixm.aero/base/3.0"
+   xmlns:ff="http://www.fixm.aero/foundation/3.0"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -48,12 +50,343 @@
          Details on the US FAA: http://www.faa.gov/ 
       </documentation>
    </annotation>
-   <include schemaLocation="./NasTmiCompliance.xsd"/>
-   <include schemaLocation="./NasTmiData.xsd"/>
-   <include schemaLocation="./NasTmiTrajectoryOptions.xsd"/>
+   <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
+   <import namespace="http://www.fixm.aero/foundation/3.0" schemaLocation="./../../core/foundation/Foundation.xsd"/>
    <annotation>
       <documentation>
          Defines the NAS specific  traffic management initiatives concepts. 
       </documentation>
    </annotation>
+
+   <simpleType name="AdvisoryTypeType">
+      <annotation>
+         <documentation>
+            .Traffic Flow Management Advisory Number: Advisory number issued by traffic flow 
+            management. 
+            .Traffic Flow Management Advisory Type: The type for the advisory issued by traffic 
+            flow management. 
+         </documentation>
+      </annotation>
+      <restriction base="xs:string">
+         <enumeration value="GDP">
+            <annotation>
+               <documentation>
+                  Ground Delay Program Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="AFP">
+            <annotation>
+               <documentation>
+                  Airspace Flow Program Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="GDP_CANCEL">
+            <annotation>
+               <documentation>
+                  Ground Delay Program cancellation Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="AFP_CANCEL">
+            <annotation>
+               <documentation>
+                  Airspace Flow Program Cancellation Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="GS">
+            <annotation>
+               <documentation>
+                  Ground Stop Program Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="GS_CANCEL">
+            <annotation>
+               <documentation>
+                  Ground Stop Program cancellation Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="REROUTE">
+            <annotation>
+               <documentation>
+                  Reroute Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="CTOP">
+            <annotation>
+               <documentation>
+                  Collaborative Trajectory Options Program Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="CTOP_CANCEL">
+            <annotation>
+               <documentation>
+                  Collaborative Trajectory Options Program cancellation Advisory 
+               </documentation>
+            </annotation>
+         </enumeration>
+      </restriction>
+   </simpleType>
+
+   <complexType name="NasAdvisoryType">
+      <annotation>
+         <documentation>
+            .NAS Advisory Information: A container for Traffic Flow Management advisories pertinent 
+            to a single flight. 
+         </documentation>
+      </annotation>
+      <attribute name="advisoryNumber" type="fb:FreeTextType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management Advisory Number: Advisory number issued by traffic flow 
+               management. 
+               .Traffic Flow Management Advisory Type: The type for the advisory issued by traffic 
+               flow management. 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="advisoryType" type="nas:AdvisoryTypeType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management Advisory Number: Advisory number issued by traffic flow 
+               management. 
+               .Traffic Flow Management Advisory Type: The type for the advisory issued by traffic 
+               flow management. 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="advisoryUpdateTime" type="ff:TimeType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management Advisory Update Time: The date and time when the advisory 
+               was last updated. 
+            </documentation>
+         </annotation>
+      </attribute>
+   </complexType>
+   <element name="NasAdvisory" type="nas:NasAdvisoryType" /> 
+
+   <complexType name="NasRerouteType">
+      <annotation>
+         <documentation>
+            .Traffic Flow Management Reroute Information: A container for information pertinent 
+            to a single NAS reroute issued for a flight by traffic flow management. 
+         </documentation>
+      </annotation>
+      <attribute name="rerouteIdentifier" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management System Reroute Identifier: Traffic Flow Management System 
+               generated unique identifier for the reroute. 
+               .Traffic Flow Management System Reroute Name: Traffic Flow Management System assigned 
+               name for the reroute. 
+               .Traffic Flow Management System Reroute Type: Route type of the assigned reroute. 
+               
+            </documentation>
+         </annotation>
+         <simpleType>
+            <restriction base="fb:FreeTextType">
+               <maxLength value="100"/>
+               <minLength value="3"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+      <attribute name="rerouteInclusionIndicator" type="nas:RerouteInclusionIndicatorType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management System Reroute Inclusion Indicator: Indicates whether the 
+               flight is included or proposed to be included in the traffic management reroute initiative. 
+               
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="rerouteName" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management System Reroute Identifier: Traffic Flow Management System 
+               generated unique identifier for the reroute. 
+               .Traffic Flow Management System Reroute Name: Traffic Flow Management System assigned 
+               name for the reroute. 
+               .Traffic Flow Management System Reroute Type: Route type of the assigned reroute. 
+               
+            </documentation>
+         </annotation>
+         <simpleType>
+            <restriction base="fb:FreeTextType">
+               <maxLength value="64"/>
+               <minLength value="0"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+      <attribute name="rerouteProtectedSegment" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management System Reroute Protected Segment: All or a portion of the 
+               route string that is designated as the protected portion. 
+            </documentation>
+         </annotation>
+         <simpleType>
+            <restriction base="fb:FreeTextType">
+               <maxLength value="1000"/>
+               <minLength value="1"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+      <attribute name="rerouteType" type="nas:RerouteTypeType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Traffic Flow Management System Reroute Identifier: Traffic Flow Management System 
+               generated unique identifier for the reroute. 
+               .Traffic Flow Management System Reroute Name: Traffic Flow Management System assigned 
+               name for the reroute. 
+               .Traffic Flow Management System Reroute Type: Route type of the assigned reroute. 
+               
+            </documentation>
+         </annotation>
+      </attribute>
+   </complexType>
+   <element name="NasReroute" type="nas:NasRerouteType" /> 
+
+   <complexType name="NasTmiType">
+      <annotation>
+         <documentation>
+            Container for NAS Traffic Management Initiatives.  CTOP Information is not included 
+            in this container but instead collected in the NasTmiTrajectoryOption Container and 
+            connected to the Flight Object. 
+         </documentation>
+      </annotation>
+      <sequence>
+         <element name="advisories" type="nas:NasAdvisoryType" minOccurs="0" maxOccurs="unbounded" > 
+            <annotation>
+               <documentation>
+                  .NAS Advisory Information: A container for Traffic Flow Management advisories pertinent 
+                  to a single flight. 
+               </documentation>
+            </annotation>
+         </element>
+         <element name="reroute" type="nas:NasRerouteType" minOccurs="0" maxOccurs="unbounded" > 
+            <annotation>
+               <documentation>
+                  A container for information pertinent to a single NAS reroute issued for a flight 
+                  by traffic flow management. 
+                  .Traffic Flow Management Reroute Information: A container for information pertinent 
+                  to a single NAS reroute issued for a flight by traffic flow management. 
+               </documentation>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   <element name="NasTmi" type="nas:NasTmiType" /> 
+
+   <simpleType name="RerouteInclusionIndicatorType">
+      <annotation>
+         <documentation>
+            .Traffic Flow Management System Reroute Inclusion Indicator: Indicates whether the 
+            flight is included or proposed to be included in the traffic management reroute initiative. 
+            
+         </documentation>
+      </annotation>
+      <restriction base="xs:string">
+         <enumeration value="INCLUDED">
+            <annotation>
+               <documentation>
+                  Indicates whether the flight is included or proposed to be included in the traffic 
+                  management reroute initiative. 
+               </documentation>
+            </annotation>
+         </enumeration>
+      </restriction>
+   </simpleType>
+
+   <simpleType name="RerouteTypeType">
+      <annotation>
+         <documentation>
+            .Traffic Flow Management System Reroute Identifier: Traffic Flow Management System 
+            generated unique identifier for the reroute. 
+            .Traffic Flow Management System Reroute Name: Traffic Flow Management System assigned 
+            name for the reroute. 
+            .Traffic Flow Management System Reroute Type: Route type of the assigned reroute. 
+            
+         </documentation>
+      </annotation>
+      <restriction base="xs:string">
+         <enumeration value="BLANK">
+            <annotation>
+               <documentation>
+                  blank entry (for EXPLICIT selection) 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="CDR_RTE">
+            <annotation>
+               <documentation>
+                  Coded Departure Route (retrieved from the CDR db) 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="REROUTE">
+            <annotation>
+               <documentation>
+                  Reroute (manually updated reroute) 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="UPT_RTE">
+            <annotation>
+               <documentation>
+                  User Preferred Trajectory Route (user submitted early intent route) 
+               </documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="UNKNOWN">
+            <annotation>
+               <documentation>
+                  Unknown Route 
+               </documentation>
+            </annotation>
+         </enumeration>
+      </restriction>
+   </simpleType>
+
+   <simpleType name="SlotHoldStatusType">
+      <annotation>
+         <documentation>
+            .Slot Hold Status: If a flight is controlled and cancelled [e.g., has a Controlled 
+            Time of Departure (CTD), Controlled Time of Arrival (CTA), and Arrival Slot (ASLOT)], 
+            the slot hold status indicates whether the slot associated with this flight is being 
+            held, or would be held, by the Airspace User for the next full compression. 
+         </documentation>
+      </annotation>
+      <restriction base="xs:string">
+         <enumeration value="HOLD"/>
+         <enumeration value="RELEASE"/>
+      </restriction>
+   </simpleType>
+
+   <simpleType name="SlotYieldedIndicatorType">
+      <annotation>
+         <documentation>
+            .Yielded Slot Indicator: Indicates the slot currently specified in   Runway Arrival 
+            Time - Controlled   is to be given up by the Airspace User in return for a later 
+            slot. 
+         </documentation>
+      </annotation>
+      <restriction base="xs:string">
+         <enumeration value="SLOT_YIELDED">
+            <annotation>
+               <documentation>
+                  .Yielded Slot Indicator : Indicates the slot currently specified in "Runway Arrival 
+                  Time - Controlled" is to be given up by the Airspace User in return for a later slot. 
+                  
+               </documentation>
+            </annotation>
+         </enumeration>
+      </restriction>
+   </simpleType>
 </schema>

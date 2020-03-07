@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
    xmlns:fx="http://www.fixm.aero/flight/3.0"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -121,10 +121,10 @@
                   <annotation>
                      <documentation>
                         Container for the Actual Boundary Crossing Attributes 
-                        .Boundary Crossing Position - Actual: The actual boundary crossing point inbound 
-                        to the Air Route Traffic Control Center (ARTCC) for the flight. 
                         .Boundary Crossing Time - Actual: The actual time at which a flight crosses the associated 
                         boundary crossing point. 
+                        .Boundary Crossing Position - Actual: The actual boundary crossing point inbound 
+                        to the Air Route Traffic Control Center (ARTCC) for the flight. 
                      </documentation>
                   </annotation>
                </element>

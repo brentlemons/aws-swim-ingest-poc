@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
-   xmlns:ff="http://www.fixm.aero/foundation/3.0"
    xmlns:fx="http://www.fixm.aero/flight/3.0"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -51,9 +50,9 @@
          Details on the US FAA: http://www.faa.gov/ 
       </documentation>
    </annotation>
+   <include schemaLocation="./NasTmi.xsd"/>
    <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
    <import namespace="http://www.fixm.aero/flight/3.0" schemaLocation="./../../core/flight/FlightObject.xsd"/>
-   <import namespace="http://www.fixm.aero/foundation/3.0" schemaLocation="./../../core/foundation/Foundation.xsd"/>
    <annotation>
       <documentation>
          Contains definitions to NAS specific extension of FIXM Core En Route concepts. 
@@ -63,13 +62,21 @@
    <complexType name="AirspaceAcceptableSlotSubstitutionType">
       <annotation>
          <documentation>
-            Container that holds information about Airspace Slot Credit Substitution 
+            .Runway Arrival Time - Slot Credit Substitution Earliest Acceptable: The earliest 
+            time at which the Airspace user will accept a slot in a Traffic Management Initiative 
+            (TMI) Ground Delay Program (GDP) in return for a yielded slot. 
+            .Runway Arrival Time - Slot Credit Substitution Latest Acceptable: The latest time 
+            at which the Airspace user will accept a slot in a Traffic Management Initiative 
+            (TMI) Ground Delay Program (GDP), in return for a yielded slot. 
          </documentation>
       </annotation>
       <sequence>
          <element name="earliest" type="fb:ReportedTimeType" minOccurs="0" maxOccurs="1" > 
             <annotation>
                <documentation>
+                  .Airspace Entry Time - Slot Credit Substitution Latest Acceptable: The latest time 
+                  at which the Airspace user will accept a slot in a Traffic Management Initiative 
+                  (TMI) Airspace Flow Program (AFP), in return for a yielded slot. 
                   .Airspace Entry Time - Slot Credit Substitution Earliest Acceptable: The earliest 
                   time at which the Airspace user will accept a slot in a Traffic Management Initiative 
                   (TMI) Airspace Flow Program (AFP) in return for a yielded slot. 
@@ -82,6 +89,9 @@
                   .Airspace Entry Time - Slot Credit Substitution Latest Acceptable: The latest time 
                   at which the Airspace user will accept a slot in a Traffic Management Initiative 
                   (TMI) Airspace Flow Program (AFP), in return for a yielded slot. 
+                  .Airspace Entry Time - Slot Credit Substitution Earliest Acceptable: The earliest 
+                  time at which the Airspace user will accept a slot in a Traffic Management Initiative 
+                  (TMI) Airspace Flow Program (AFP) in return for a yielded slot. 
                </documentation>
             </annotation>
          </element>
@@ -100,16 +110,6 @@
          </documentation>
       </annotation>
       <sequence>
-         <element name="base" type="fb:ReportedTimeType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  .Airspace Entry Time - Base: The last Airspace Entry Time - Traffic Flow Management 
-                  System Estimated modeled by the Traffic Flow Management System (TFMS) before either 
-                  a Traffic Management Initiative is issued, or the flight departs, and includes any 
-                  time-out delay modeled by TFMS. 
-               </documentation>
-            </annotation>
-         </element>
          <element name="earliest" type="fb:ReportedTimeType" minOccurs="0" maxOccurs="1" > 
             <annotation>
                <documentation>
@@ -139,20 +139,34 @@
          <element name="slotSubstitution" type="nas:AirspaceAcceptableSlotSubstitutionType" minOccurs="0" maxOccurs="1" > 
             <annotation>
                <documentation>
-                  Information about Airspace Slot Credit Subsititution 
+                  .Airspace Entry Time - Slot Credit Substitution Latest Acceptable: The latest time 
+                  at which the Airspace user will accept a slot in a Traffic Management Initiative 
+                  (TMI) Airspace Flow Program (AFP), in return for a yielded slot. 
+                  .Runway Arrival Time - Slot Credit Substitution Earliest Acceptable: The earliest 
+                  time at which the Airspace user will accept a slot in a Traffic Management Initiative 
+                  (TMI) Ground Delay Program (GDP) in return for a yielded slot. 
+                  .Runway Arrival Time - Slot Credit Substitution Latest Acceptable: The latest time 
+                  at which the Airspace user will accept a slot in a Traffic Management Initiative 
+                  (TMI) Ground Delay Program (GDP), in return for a yielded slot. 
+                  .Airspace Entry Time - Slot Credit Substitution Earliest Acceptable: The earliest 
+                  time at which the Airspace user will accept a slot in a Traffic Management Initiative 
+                  (TMI) Airspace Flow Program (AFP) in return for a yielded slot. 
+               </documentation>
+            </annotation>
+         </element>
+         <element name="tfmsEstimated" type="fb:ReportedTimeType" minOccurs="0" maxOccurs="1" > 
+            <annotation>
+               <documentation>
+                  .Airspace Exit Time - Traffic Flow Management System Estimated: The estimated airspace 
+                  exit time considering all data sources, as determined by Traffic Flow Management 
+                  System (TFMS). 
+                  .Airspace Entry Time - Traffic Flow Management System Estimated: The estimated airspace 
+                  entry time considering all data sources, as determined by Traffic Flow Management 
+                  System (TFMS). 
                </documentation>
             </annotation>
          </element>
       </sequence>
-      <attribute name="tfmsEstimated" type="ff:TimeType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Airspace Entry Time - Traffic Flow Management System Estimated: The estimated airspace 
-               entry time considering all data sources, as determined by Traffic Flow Management 
-               System (TFMS). 
-            </documentation>
-         </annotation>
-      </attribute>
    </complexType>
    <element name="AirspaceEntryTime" type="nas:AirspaceEntryTimeType" /> 
 
@@ -163,38 +177,22 @@
             Airspace Exit Time - Traffic Flow Management System Estimated 
          </documentation>
       </annotation>
-      <attribute name="extendedExitTfmsEstimated" type="ff:TimeType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Airspace Extended Exit Time - Traffic Flow Management System Estimated: The estimated 
-               airspace exit time for the flight when using the extended end time of the constrained 
-               airspace. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="tfmsEstimated" type="ff:TimeType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Airspace Exit Time - Traffic Flow Management System Estimated: The estimated airspace 
-               exit time considering all data sources, as determined by Traffic Flow Management 
-               System (TFMS). 
-            </documentation>
-         </annotation>
-      </attribute>
+      <sequence>
+         <element name="tfmsEstimated" type="fb:ReportedTimeType" minOccurs="0" maxOccurs="1" > 
+            <annotation>
+               <documentation>
+                  .Airspace Exit Time - Traffic Flow Management System Estimated: The estimated airspace 
+                  exit time considering all data sources, as determined by Traffic Flow Management 
+                  System (TFMS). 
+                  .Airspace Entry Time - Traffic Flow Management System Estimated: The estimated airspace 
+                  entry time considering all data sources, as determined by Traffic Flow Management 
+                  System (TFMS). 
+               </documentation>
+            </annotation>
+         </element>
+      </sequence>
    </complexType>
    <element name="AirspaceExitTime" type="nas:AirspaceExitTimeType" /> 
-
-   <simpleType name="FlightExitIndicatorType">
-      <annotation>
-         <documentation>
-            .Constrained Airspace Flight Exit Indicator: Indicates that a flight is an exit flight, 
-            and it is no longer intersecting the constrained airspace. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="FLIGHT_EXIT"/>
-      </restriction>
-   </simpleType>
 
    <complexType name="NasAirspaceConstraintType">
       <annotation>
@@ -205,22 +203,6 @@
       <complexContent>
          <extension base="fx:AirspaceConstraintType">
             <sequence>
-               <element name="entryPoint" type="fb:LocationPointType" minOccurs="0" maxOccurs="1" > 
-                  <annotation>
-                     <documentation>
-                        .Constrained Airspace Entry Point: The flight's position at entry into the constrained 
-                        airspace. 
-                     </documentation>
-                  </annotation>
-               </element>
-               <element name="entryPointHeading" type="fb:DirectionType" minOccurs="0" maxOccurs="1" > 
-                  <annotation>
-                     <documentation>
-                        .Constrained Airspace Entry Point Heading: The flight's heading at the entry point 
-                        into the constrained airspace. 
-                     </documentation>
-                  </annotation>
-               </element>
                <element name="entryTime" type="nas:AirspaceEntryTimeType" minOccurs="0" maxOccurs="1" > 
                   <annotation>
                      <documentation>
@@ -238,33 +220,19 @@
                         .Airspace Exit Time - Traffic Flow Management System Estimated: The estimated airspace 
                         exit time considering all data sources, as determined by Traffic Flow Management 
                         System (TFMS). 
+                        .Airspace Entry Time - Traffic Flow Management System Estimated: The estimated airspace 
+                        entry time considering all data sources, as determined by Traffic Flow Management 
+                        System (TFMS). 
                      </documentation>
                   </annotation>
                </element>
             </sequence>
-            <attribute name="arrivalSlot" type="fb:SlotAssignmentType" use="optional" > 
+            <attribute name="arrivalSlot" type="fb:FreeTextType" use="optional" > 
                <annotation>
                   <documentation>
                      .Arrival Slot - NAS: A time slot at an airport or airspace entry point that identifies 
                      a point in time when an aircraft is constrained to arrive at the airport or airspace 
                      entry point. 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="flightCreationTime" type="ff:TimeType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .Traffic Flow Management System Airspace Constrained Area Flight Creation Time: The 
-                     time when the flight was first detected intersecting the Flow Evaluation Area/Flow 
-                     Constrained Area. 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="flightExitIndicator" type="nas:FlightExitIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .Constrained Airspace Flight Exit Indicator: Indicates that a flight is an exit flight, 
-                     and it is no longer intersecting the constrained airspace. 
                   </documentation>
                </annotation>
             </attribute>
@@ -275,14 +243,6 @@
                      Time of Departure (CTD), Controlled Time of Arrival (CTA), and Arrival Slot (ASLOT)], 
                      the slot hold status indicates whether the slot associated with this flight is being 
                      held, or would be held, by the Airspace User for the next full compression. 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="identifierLastUpdateTime" type="ff:TimeType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .Airspace Identifier Last Update Time: The time when the Flow Constrained Area definition 
-                     was last updated. 
                   </documentation>
                </annotation>
             </attribute>
@@ -361,40 +321,4 @@
       </complexContent>
    </complexType>
    <element name="NasEnRoute" type="nas:NasEnRouteType" substitutionGroup="fb:Feature" /> 
-
-   <simpleType name="SlotHoldStatusType">
-      <annotation>
-         <documentation>
-            .Slot Hold Status: If a flight is controlled and cancelled [e.g., has a Controlled 
-            Time of Departure (CTD), Controlled Time of Arrival (CTA), and Arrival Slot (ASLOT)], 
-            the slot hold status indicates whether the slot associated with this flight is being 
-            held, or would be held, by the Airspace User for the next full compression. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="HOLD"/>
-         <enumeration value="RELEASE"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="SlotYieldedIndicatorType">
-      <annotation>
-         <documentation>
-            .Yielded Slot Indicator: Indicates the slot currently specified in   Runway Arrival 
-            Time - Controlled   is to be given up by the Airspace User in return for a later 
-            slot. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="SLOT_YIELDED">
-            <annotation>
-               <documentation>
-                  .Yielded Slot Indicator : Indicates the slot currently specified in "Runway Arrival 
-                  Time - Controlled" is to be given up by the Airspace User in return for a later slot. 
-                  
-               </documentation>
-            </annotation>
-         </enumeration>
-      </restriction>
-   </simpleType>
 </schema>

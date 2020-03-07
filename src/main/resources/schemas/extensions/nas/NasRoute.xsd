@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
    xmlns:ff="http://www.fixm.aero/foundation/3.0"
    xmlns:fx="http://www.fixm.aero/flight/3.0"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -60,55 +60,6 @@
          route concepts. 
       </documentation>
    </annotation>
-
-   <simpleType name="DirectRouteIndicatorType">
-      <annotation>
-         <documentation>
-            .Traffic Flow Management System Route Direct Indicator: The character data parsed 
-            by the Traffic Flow Management System from the route string indicates that the route 
-            is direct (DCT). 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="DIRECT_ROUTE"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="IncompleteIndicatorType">
-      <annotation>
-         <documentation>
-            .NAS Route - Incomplete Indicator: Indicates whether the NAS Route is incomplete 
-            or not. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="INCOMPLETE"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="InhibitAdaptedArrRoutesIndicatorType">
-      <annotation>
-         <documentation>
-            .NAS Route - Inhibit Adapted Arrival Routes Indicator: Indicates whether adapted 
-            arrival routes are inhibited for use for the NAS Route for the flight or not. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="INHIBIT_ADAPTED_ARRIVAL_ROUTES"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="InhibitAdaptedDepRoutesIndicatorType">
-      <annotation>
-         <documentation>
-            .NAS Route - Inhibit Adapted Departure Routes Indicator: Indicates whether adapted 
-            departure routes are inhibited for use for the NAS Route for the flight or not. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="INHIBIT_ADAPTED_DEPARTURE_ROUTES"/>
-      </restriction>
-   </simpleType>
 
    <complexType name="NasAdaptedArrivalRouteType">
       <annotation>
@@ -157,24 +108,24 @@
                .Adapted Departure Arrival Route Clearance Support Alphanumerics: This field contains 
                the route string with an Adapted Departure Arrival Route (ADAR) to be provided to 
                the controller at the time the auto-route is applied. 
-               .Adapted Departure Route Clearance Support Alphanumerics: This field contains the 
-               route string with an Adapted Departure Route (ADR) to be provided to the controller 
-               at the time the auto-route is applied. 
                .Adapted Arrival Route Clearance Support Alphanumerics: This field contains the route 
                string with an Adapted Arrival Route (AAR) to be provided to the controller at the 
                time the auto-route is applied. 
+               .Adapted Departure Route Clearance Support Alphanumerics: This field contains the 
+               route string with an Adapted Departure Route (ADR) to be provided to the controller 
+               at the time the auto-route is applied. 
             </documentation>
          </annotation>
       </attribute>
       <attribute name="nasRouteIdentifier" use="optional" > 
          <annotation>
             <documentation>
-               .Adapted Arrival Route Identifier: The five character identifier used to internally 
-               identify an adapted arrival route. 
-               .Adapted Departure Route Identifier: The identifier used to internally identify the 
-               Adapted Departure Route (ADR). 
                .Adapted Departure Arrival Route Identifier: The five character identifier is used 
                to internally identify an Adapted Departure Arrival Route (ADAR). 
+               .Adapted Departure Route Identifier: The identifier used to internally identify the 
+               Adapted Departure Route (ADR). 
+               .Adapted Arrival Route Identifier: The five character identifier used to internally 
+               identify an adapted arrival route. 
             </documentation>
          </annotation>
          <simpleType>
@@ -274,14 +225,6 @@
                      </documentation>
                   </annotation>
                </element>
-               <element name="greatCircleDistance" type="ff:DistanceType" minOccurs="0" maxOccurs="1" > 
-                  <annotation>
-                     <documentation>
-                        .Great Circle Distance: Provides the Great Circle Distance, in nautical miles, between 
-                        the departure and the destination airports for the flight. 
-                     </documentation>
-                  </annotation>
-               </element>
                <element name="holdFix" type="fb:SignificantPointType" minOccurs="0" maxOccurs="1" > 
                   <annotation>
                      <documentation>
@@ -297,24 +240,6 @@
                      </documentation>
                   </annotation>
                </element>
-               <element name="tfmsNextEvent" type="ff:GeographicLocationType" minOccurs="0" maxOccurs="1" > 
-                  <annotation>
-                     <documentation>
-                        .Traffic Flow Management System Next Event: Provides the location of the next point 
-                        in a flight s current modeled route of flight that has not yet been deemed to have 
-                        been flown past. 
-                     </documentation>
-                  </annotation>
-               </element>
-               <element name="tfmsNextPosition" type="ff:GeographicLocationType" minOccurs="0" maxOccurs="1" > 
-                  <annotation>
-                     <documentation>
-                        .Traffic Flow Management System Next Position: Provides the location of the first 
-                        point in a flight s (re)modeled route of flight that has not yet been deemed to have 
-                        been flown past. 
-                     </documentation>
-                  </annotation>
-               </element>
             </sequence>
             <attribute name="atcIntendedRoute" type="fb:FreeTextType" use="optional" > 
                <annotation>
@@ -322,39 +247,6 @@
                      .ATC Intended Route: The current cleared flight plan route with any unacknowledged 
                      auto routes (preferential routes, transition fixes and A-line fixes) already applied. 
                      
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="estimatedEnRouteDuration" type="ff:DurationType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .NAS Time En Route - Estimated: The total estimated time en route, from the departure 
-                     time (runway) to the arrival at the destination (runway) as provided by the airspace 
-                     user in the NAS flight plan. 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="incompleteIndicator" type="nas:IncompleteIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .NAS Route - Incomplete Indicator: Indicates whether the NAS Route is incomplete 
-                     or not. 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="inhibitAdaptedArrRoutes" type="nas:InhibitAdaptedArrRoutesIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .NAS Route - Inhibit Adapted Arrival Routes Indicator: Indicates whether adapted 
-                     arrival routes are inhibited for use for the NAS Route for the flight or not. 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="inhibitAdaptedDepRoutes" type="nas:InhibitAdaptedDepRoutesIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .NAS Route - Inhibit Adapted Departure Routes Indicator: Indicates whether adapted 
-                     departure routes are inhibited for use for the NAS Route for the flight or not. 
                   </documentation>
                </annotation>
             </attribute>
@@ -368,26 +260,12 @@
                   </documentation>
                </annotation>
             </attribute>
-            <attribute name="nasPreviousRouteText" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .NAS Previous Route: This element is the current route. Once the flight is active, 
-                     this element shows the currently cleared route the airplane will fly from the departure 
-                     airport to the arrival airport. 
-                  </documentation>
-               </annotation>
-               <simpleType>
-                  <restriction base="fb:FreeTextType">
-                     <pattern value="[A-Z0-9/\.\+\*&amp;lt;&amp;gt;]+"/>
-                  </restriction>
-               </simpleType>
-            </attribute>
             <attribute name="nasRouteText" use="optional" > 
                <annotation>
                   <documentation>
-                     .NAS Route: This element is the filed route. It only includes acknowledged auto routes. 
-                     Once the flight is active, this element shows the currently cleared route the airplane 
-                     will fly from the departure airport to the arrival airport. 
+                     .Flight Plan Route: This element is the filed route. It only includes acknowledged 
+                     auto routes. Once the flight is active, this element shows the currently cleared 
+                     route the airplane will fly from the departure airport to the arrival airport. 
                   </documentation>
                </annotation>
                <simpleType>
@@ -395,15 +273,6 @@
                      <pattern value="[A-Z0-9/\.\+\*&amp;lt;&amp;gt;]+"/>
                   </restriction>
                </simpleType>
-            </attribute>
-            <attribute name="tailoredIndicator" type="nas:TailoredIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .NAS Route - Tailored Indicator: Indicates whether the NAS Route is tailored or not 
-                     (i.e., a portion of the route string immediately after the departure aerodrome has 
-                     been removed). 
-                  </documentation>
-               </annotation>
             </attribute>
          </extension>
       </complexContent>
@@ -442,15 +311,6 @@
       </annotation>
       <complexContent>
          <extension base="fx:RouteSegmentType">
-            <attribute name="directRouteIndicator" type="nas:DirectRouteIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .Traffic Flow Management System Route Direct Indicator: The character data parsed 
-                     by the Traffic Flow Management System from the route string indicates that the route 
-                     is direct (DCT). 
-                  </documentation>
-               </annotation>
-            </attribute>
             <attribute name="reEntryCount" type="fb:CountType" use="optional" > 
                <annotation>
                   <documentation>
@@ -469,146 +329,10 @@
                   </documentation>
                </annotation>
             </attribute>
-            <attribute name="routeTerminateIndicator" type="nas:RouteTerminateIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .Traffic Flow Management System Route Terminate Indicator: The character data parsed 
-                     by the Traffic Flow Management System from the route string indicates that the route 
-                     terminates (T). 
-                  </documentation>
-               </annotation>
-            </attribute>
-            <attribute name="unknownRouteElementIndicator" type="nas:UnknownRouteElementIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     .Traffic Flow Management System Route Unknown Element: The character data parsed 
-                     by the Traffic Flow Management System from the route string that could not be characterized 
-                     as fix, route or indicator. 
-                  </documentation>
-               </annotation>
-            </attribute>
          </extension>
       </complexContent>
    </complexType>
    <element name="NasRouteSegment" type="nas:NasRouteSegmentType" substitutionGroup="fx:RouteSegment" /> 
-
-   <complexType name="PredictedFixType">
-      <annotation>
-         <documentation>
-            Contains information about flight traversal of predicted fix 
-            .Predicted Fixes: Current prediction of fixes along the trajectory of a flight, where 
-            these predictions are based on all the information available to the Traffic Flow 
-            Management System (TFMS). 
-         </documentation>
-      </annotation>
-      <sequence>
-         <element name="predictedFix" type="fb:SignificantPointType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  .Predicted Fixes: Current prediction of fixes along the trajectory of a flight, where 
-                  these predictions are based on all the information available to the Traffic Flow 
-                  Management System (TFMS). 
-               </documentation>
-            </annotation>
-         </element>
-      </sequence>
-      <attribute name="estimatedElapsedTime" type="ff:DurationType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Predicted Fixes Estimated Elapsed Time: The estimated time to arrive at the named 
-               fix relative to departure time. 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="PredictedFix" type="nas:PredictedFixType" /> 
-
-   <complexType name="PredictedSectorType">
-      <annotation>
-         <documentation>
-            Contains information about flight traversal of predicted sector 
-         </documentation>
-      </annotation>
-      <sequence>
-         <element name="predictedSector" type="ff:UnitSectorAirspaceType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  .Predicted Sectors: Current prediction of the sectors along the trajectory of a flight. 
-                  
-               </documentation>
-            </annotation>
-         </element>
-      </sequence>
-      <attribute name="estimatedElapsedEntryTime" type="ff:DurationType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Predicted Sectors Estimated Elapsed Entry Time: The estimated time to arrive at 
-               the Sector entry point relative to departure time. 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="PredictedSector" type="nas:PredictedSectorType" /> 
-
-   <complexType name="PredictedUnitType">
-      <annotation>
-         <documentation>
-            Contains information about flight traversal of predicted unit 
-            .Predicted Units: Current prediction of the en route Air Traffic Control units (centres) 
-            along the trajectory of a flight. 
-         </documentation>
-      </annotation>
-      <sequence>
-         <element name="predictedUnit" type="ff:UnitSectorAirspaceType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  .Predicted Units: Current prediction of the en route Air Traffic Control units (centres) 
-                  along the trajectory of a flight. 
-               </documentation>
-            </annotation>
-         </element>
-      </sequence>
-      <attribute name="estimatedElapsedEntryTime" type="ff:DurationType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Predicted Units Estimated Elapsed Entry Time: The estimated time to arrive at the 
-               Unit (Center/ARTCC) entry point relative to departure time. 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="PredictedUnit" type="nas:PredictedUnitType" /> 
-
-   <complexType name="PredictedWaypointType">
-      <annotation>
-         <documentation>
-            Contains information about flight traversal of predicted waypoint 
-            .Predicted Waypoints: Current prediction of the waypoints of the trajectory for a 
-            flight, where these predictions are based on all the information available to the 
-            Traffic Flow Management System (TFMS). 
-         </documentation>
-      </annotation>
-      <sequence>
-         <element name="predictedWaypoint" type="fb:SignificantPointType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  .Predicted Waypoints: Current prediction of the waypoints of the trajectory for a 
-                  flight, where these predictions are based on all the information available to the 
-                  Traffic Flow Management System (TFMS). 
-               </documentation>
-            </annotation>
-         </element>
-      </sequence>
-      <attribute name="estimatedElapsedTime" type="ff:DurationType" use="optional" > 
-         <annotation>
-            <documentation>
-               .Predicted Waypoints Estimated Elapsed Time: The estimated time to arrive at the 
-               latitude/longitude waypoint relative to departure time. 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="PredictedWaypoint" type="nas:PredictedWaypointType" /> 
 
    <complexType name="RouteImpactListType">
       <annotation>
@@ -630,36 +354,34 @@
                <list itemType="ff:AtsRouteType"/>
             </simpleType>
          </element>
-         <element name="predictedFix" type="nas:PredictedFixType" minOccurs="0" maxOccurs="unbounded" > 
+         <element name="predictedFix" type="fb:SignificantPointType" minOccurs="0" maxOccurs="unbounded" > 
             <annotation>
                <documentation>
-                  Contains information about flight traversal of predicted units. 
                   .Predicted Fixes: Current prediction of fixes along the trajectory of a flight, where 
                   these predictions are based on all the information available to the Traffic Flow 
                   Management System (TFMS). 
                </documentation>
             </annotation>
          </element>
-         <element name="predictedSector" type="nas:PredictedSectorType" minOccurs="0" maxOccurs="unbounded" > 
+         <element name="predictedSector" type="ff:UnitSectorAirspaceType" minOccurs="0" maxOccurs="unbounded" > 
             <annotation>
                <documentation>
-                  Contains information about flight traversal of predicted sector 
+                  .Predicted Sectors: Current prediction of the sectors along the trajectory of a flight. 
+                  
                </documentation>
             </annotation>
          </element>
-         <element name="predictedUnit" type="nas:PredictedUnitType" minOccurs="0" maxOccurs="unbounded" > 
+         <element name="predictedUnit" type="ff:UnitSectorAirspaceType" minOccurs="0" maxOccurs="unbounded" > 
             <annotation>
                <documentation>
-                  Contains information about flight traversal of predicted unit 
                   .Predicted Units: Current prediction of the en route Air Traffic Control units (centres) 
                   along the trajectory of a flight. 
                </documentation>
             </annotation>
          </element>
-         <element name="predictedWaypoint" type="nas:PredictedWaypointType" minOccurs="0" maxOccurs="unbounded" > 
+         <element name="predictedWaypoint" type="fb:SignificantPointType" minOccurs="0" maxOccurs="unbounded" > 
             <annotation>
                <documentation>
-                  Contains information about flight traversal of predicted waypoint 
                   .Predicted Waypoints: Current prediction of the waypoints of the trajectory for a 
                   flight, where these predictions are based on all the information available to the 
                   Traffic Flow Management System (TFMS). 
@@ -669,43 +391,4 @@
       </sequence>
    </complexType>
    <element name="RouteImpactList" type="nas:RouteImpactListType" /> 
-
-   <simpleType name="RouteTerminateIndicatorType">
-      <annotation>
-         <documentation>
-            .Traffic Flow Management System Route Terminate Indicator: The character data parsed 
-            by the Traffic Flow Management System from the route string indicates that the route 
-            terminates (T). 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="ROUTE_TERMINATE"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="TailoredIndicatorType">
-      <annotation>
-         <documentation>
-            .NAS Route - Tailored Indicator: Indicates whether the NAS Route is tailored or not 
-            (i.e., a portion of the route string immediately after the departure aerodrome has 
-            been removed). 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="TAILORED"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="UnknownRouteElementIndicatorType">
-      <annotation>
-         <documentation>
-            .Traffic Flow Management System Route Unknown Element: The character data parsed 
-            by the Traffic Flow Management System from the route string that could not be characterized 
-            as fix, route or indicator. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="UNKNOWN_ROUTE_ELEMENT"/>
-      </restriction>
-   </simpleType>
 </schema>

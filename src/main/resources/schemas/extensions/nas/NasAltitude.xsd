@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
    xmlns:ff="http://www.fixm.aero/foundation/3.0"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -103,19 +103,6 @@
    </complexType>
    <element name="AltFixAltAltitude" type="nas:AltFixAltAltitudeType" /> 
 
-   <simpleType name="AltitudeSuffixType">
-      <annotation>
-         <documentation>
-            Reported altitude suffix 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="C"/>
-         <enumeration value="T"/>
-         <enumeration value="B"/>
-      </restriction>
-   </simpleType>
-
    <complexType name="BlockAltitudeType">
       <annotation>
          <documentation>
@@ -141,17 +128,6 @@
       </sequence>
    </complexType>
    <element name="BlockAltitude" type="nas:BlockAltitudeType" /> 
-
-   <simpleType name="InvalidIndicatorType">
-      <annotation>
-         <documentation>
-            Indicates whether target altitude is invalid. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="INVALID"/>
-      </restriction>
-   </simpleType>
 
    <complexType name="NasAltitudeType">
       <annotation>
@@ -222,26 +198,6 @@
    </complexType>
    <element name="NasAltitude" type="nas:NasAltitudeType" /> 
 
-   <complexType name="ReportedAltitudeType">
-      <annotation>
-         <documentation>
-            .NAS Reported Altitude: Provides the NAS reported altitude with optional suffixes 
-            (B, C, T). 
-         </documentation>
-      </annotation>
-      <simpleContent>
-         <extension base="ff:AltitudeType">
-            <attribute name="altitudeSuffix" type="nas:AltitudeSuffixType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     Reported Altitude suffix 
-                  </documentation>
-               </annotation>
-            </attribute>
-         </extension>
-      </simpleContent>
-   </complexType>
-
    <complexType name="SimpleAltitudeType">
       <annotation>
          <documentation>
@@ -250,26 +206,6 @@
       </annotation>
       <simpleContent>
          <extension base="ff:AltitudeType"/>
-      </simpleContent>
-   </complexType>
-
-   <complexType name="TargetAltitudeType">
-      <annotation>
-         <documentation>
-            .Target Altitude: The Mode C target altitude, corrected for barometric pressure. 
-             Can be marked as invalid. 
-         </documentation>
-      </annotation>
-      <simpleContent>
-         <extension base="ff:AltitudeType">
-            <attribute name="invalid" type="nas:InvalidIndicatorType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     Indicates whether target altitude is invalid. 
-                  </documentation>
-               </annotation>
-            </attribute>
-         </extension>
       </simpleContent>
    </complexType>
 

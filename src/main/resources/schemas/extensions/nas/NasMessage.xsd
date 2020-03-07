@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
    xmlns:ff="http://www.fixm.aero/foundation/3.0"
    xmlns:fx="http://www.fixm.aero/flight/3.0"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -86,6 +86,30 @@
    </complexType>
    <element name="AbstractMessage" type="nas:AbstractMessageType" /> 
 
+   <complexType name="FeatureMessageType">
+      <annotation>
+         <documentation>
+            It is expected that extensions will extend this to define their own message types, 
+            including their own payloads. 
+         </documentation>
+      </annotation>
+      <complexContent>
+         <extension base="nas:AbstractMessageType">
+            <sequence>
+               <element name="feature" type="fb:FeatureType" minOccurs="0" maxOccurs="1" > 
+                  <annotation>
+                     <documentation>
+                        Feature that is contained within the feature message. Anything that extends a Feature 
+                        can be placed in a Feature message. 
+                     </documentation>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <element name="FeatureMessage" type="nas:FeatureMessageType" substitutionGroup="nas:AbstractMessage" /> 
+
    <complexType name="FlightMessageType">
       <annotation>
          <documentation>
@@ -140,73 +164,39 @@
          </documentation>
       </annotation>
       <sequence>
-         <element name="trigger" type="nas:TriggerType" minOccurs="0" maxOccurs="1" > 
+         <element name="generationLocation" type="ff:GeographicLocationType" minOccurs="0" maxOccurs="1" > 
             <annotation>
                <documentation>
-                  Container for Message Trigger information such as the type of trigger and timestamp. 
-                  
+                  the origin of the message 
+               </documentation>
+            </annotation>
+         </element>
+         <element name="validTimeSpan" type="ff:TimeSpanType" minOccurs="0" maxOccurs="1" > 
+            <annotation>
+               <documentation>
+                  the time span over which the message data is valid 
                </documentation>
             </annotation>
          </element>
       </sequence>
-      <attribute name="messageType" type="fb:FreeTextType" use="optional" > 
+      <attribute name="gumi" type="fb:FreeTextType" use="optional" > 
          <annotation>
             <documentation>
-               Type of message. For example track update, flight plan amendment. 
+               The GUMI is the Globally Unique Message Identifier. It has the following format: 
+               
+                
+               "urn":"fixm.aero":system:subsystem:timestamp:sequence 
+                
+                where:system    is the major system involved, eg "nas"
+                      subsystem is the minor system involved, eg "eram"
+                      timestamp is a time stamp to the second with all punctuation and time offset squeezed out
+                      sequence  is an ascending integer to ensure uniqueness within the second
+                
+                example:
+                      urn:fixm.aero:nas:eram:20120606T142534:384
             </documentation>
          </annotation>
       </attribute>
-      <attribute name="sensitivity" use="optional" > 
-         <annotation>
-            <documentation>
-               Sensitivity of the message 
-            </documentation>
-         </annotation>
-         <simpleType>
-            <restriction base="fb:FreeTextType">
-               <pattern value="[A-Z]"/>
-            </restriction>
-         </simpleType>
-      </attribute>
-      <attribute name="sensitivityReason" type="fb:FreeTextType" use="optional" > 
-         <annotation>
-            <documentation>
-               Reason for the message sensitivity. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attributeGroup ref="fb:ProvenanceType" > 
-         <annotation>
-            <documentation>
-               Message provenance data. Can be used by system to describe details involved in sending 
-               the message including source, center and system.. 
-            </documentation>
-         </annotation>
-      </attributeGroup>
    </complexType>
    <element name="MessageMetadata" type="nas:MessageMetadataType" /> 
-
-   <complexType name="TriggerType">
-      <annotation>
-         <documentation>
-            Container for Message Trigger information such as the type of trigger and timestamp. 
-            
-         </documentation>
-      </annotation>
-      <attribute name="timestamp" type="ff:TimeType" use="optional" > 
-         <annotation>
-            <documentation>
-               Trigger timestamp 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="triggerType" type="fb:FreeTextType" use="optional" > 
-         <annotation>
-            <documentation>
-               Describes the message trigger type. 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="Trigger" type="nas:TriggerType" /> 
 </schema>

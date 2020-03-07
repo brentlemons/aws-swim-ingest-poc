@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -49,7 +49,6 @@
       </documentation>
    </annotation>
    <include schemaLocation="./NasAircraft.xsd"/>
-   <include schemaLocation="./NasAirspace.xsd"/>
    <include schemaLocation="./NasAltitude.xsd"/>
    <include schemaLocation="./NasArrival.xsd"/>
    <include schemaLocation="./NasCoordination.xsd"/>
@@ -62,8 +61,8 @@
    <include schemaLocation="./NasPosition.xsd"/>
    <include schemaLocation="./NasRoute.xsd"/>
    <include schemaLocation="./NasStatus.xsd"/>
-   <include schemaLocation="./NasTime.xsd"/>
    <include schemaLocation="./NasTmi.xsd"/>
+   <include schemaLocation="./NasTmiTrajectoryOptions.xsd"/>
    <annotation>
       <documentation>
          NAS package contains the NAS specific FIXM extension packages. 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
+   elementFormDefault="unqualified"
    targetNamespace="http://www.fixm.aero/flight/3.0"
-   version="3.0.1"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
    xmlns:ff="http://www.fixm.aero/foundation/3.0"

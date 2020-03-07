@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
    attributeFormDefault="unqualified"
-   elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/3.2"
-   version="3.2"
+   elementFormDefault="unqualified"
+   targetNamespace="http://www.faa.aero/nas/3.0"
+   version="3.00"
    xmlns="http://www.w3.org/2001/XMLSchema"
    xmlns:fb="http://www.fixm.aero/base/3.0"
    xmlns:ff="http://www.fixm.aero/foundation/3.0"
    xmlns:fx="http://www.fixm.aero/flight/3.0"
-   xmlns:nas="http://www.faa.aero/nas/3.2"
+   xmlns:nas="http://www.faa.aero/nas/3.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2014 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -61,6 +61,17 @@
       </documentation>
    </annotation>
 
+   <simpleType name="InvalidIndicatorType">
+      <annotation>
+         <documentation>
+            Indicates whether target altitude is invalid. 
+         </documentation>
+      </annotation>
+      <restriction base="xs:string">
+         <enumeration value="INVALID"/>
+      </restriction>
+   </simpleType>
+
    <complexType name="NasAircraftPositionType">
       <annotation>
          <documentation>
@@ -70,15 +81,7 @@
       <complexContent>
          <extension base="fx:AircraftPositionType">
             <sequence>
-               <element name="reportedAltitude" type="nas:ReportedAltitudeType" minOccurs="0" maxOccurs="1" > 
-                  <annotation>
-                     <documentation>
-                        .NAS Reported Altitude: Provides the NAS reported altitude with optional suffixes 
-                        (B, C, T). 
-                     </documentation>
-                  </annotation>
-               </element>
-               <element name="targetAltitude" type="nas:TargetAltitudeType" minOccurs="0" maxOccurs="1" > 
+               <element name="targetAltitude" type="nas:NasPositionAltitudeType" minOccurs="0" maxOccurs="1" > 
                   <annotation>
                      <documentation>
                         .Target Altitude: The Mode C target altitude, corrected for barometric pressure. 
@@ -136,6 +139,28 @@
          <enumeration value="COASTING"/>
       </restriction>
    </simpleType>
+
+   <complexType name="NasPositionAltitudeType">
+      <annotation>
+         <documentation>
+            The Mode C target altitude, corrected for barometric pressure. 
+            Suspected invalid altitudes marked with the 'invalid' attribute
+            .Target Altitude: The Mode C target altitude, corrected for barometric pressure. 
+             Can be marked as invalid. 
+         </documentation>
+      </annotation>
+      <simpleContent>
+         <extension base="nas:SimpleAltitudeType">
+            <attribute name="invalid" type="nas:InvalidIndicatorType" use="optional" > 
+               <annotation>
+                  <documentation>
+                     Indicates whether target altitude is invalid. 
+                  </documentation>
+               </annotation>
+            </attribute>
+         </extension>
+      </simpleContent>
+   </complexType>
 
    <complexType name="NasVelocityType">
       <annotation>

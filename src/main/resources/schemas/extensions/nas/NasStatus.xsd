@@ -2,18 +2,17 @@
 <schema
    attributeFormDefault="unqualified"
    elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/4.2"
-   version="4.2.1"
+   targetNamespace="http://www.faa.aero/nas/3.2"
+   version="3.2"
    xmlns="http://www.w3.org/2001/XMLSchema"
-   xmlns:fb="http://www.fixm.aero/base/4.1"
-   xmlns:fx="http://www.fixm.aero/flight/4.1"
-   xmlns:mesg="http://www.fixm.aero/messaging/4.1"
-   xmlns:nas="http://www.faa.aero/nas/4.2"
+   xmlns:fb="http://www.fixm.aero/base/3.0"
+   xmlns:fx="http://www.fixm.aero/flight/3.0"
+   xmlns:nas="http://www.faa.aero/nas/3.2"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2018 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -51,203 +50,19 @@
          Details on the US FAA: http://www.faa.gov/ 
       </documentation>
    </annotation>
-   <include schemaLocation="./NasCommon.xsd"/>
-   <import namespace="http://www.fixm.aero/base/4.1" schemaLocation="./../../../schemas/core/base/Base.xsd"/>
-   <import namespace="http://www.fixm.aero/flight/4.1" schemaLocation="./../../../schemas/core/flight/Flight.xsd"/>
-   <import namespace="http://www.fixm.aero/messaging/4.1" schemaLocation="./../../../schemas/core/messaging/Messaging.xsd"/>
+   <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
+   <import namespace="http://www.fixm.aero/flight/3.0" schemaLocation="./../../core/flight/FlightObject.xsd"/>
    <annotation>
       <documentation>
          Defines the NAS specific flight status information. 
       </documentation>
    </annotation>
 
-   <simpleType name="AircraftMovementStateValueType">
-      <annotation>
-         <documentation>
-            Defines values for the TFDM aircraft movement flight state. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="SCHEDULED"/>
-         <enumeration value="FILED"/>
-         <enumeration value="AT_STAND"/>
-         <enumeration value="STAND_METERING_HOLD"/>
-         <enumeration value="RAMP_TAXI_OUT"/>
-         <enumeration value="AT_SPOT_OUT"/>
-         <enumeration value="AMA_HOLDING"/>
-         <enumeration value="AMA_TAXI_OUT"/>
-         <enumeration value="IN_DEPARTURE_QUEUE"/>
-         <enumeration value="STAND_RETURN"/>
-         <enumeration value="LUAW"/>
-         <enumeration value="TAKEOFF_ROLL"/>
-         <enumeration value="TAKEOFF_ROLL_ABORT"/>
-         <enumeration value="DEPARTED"/>
-         <enumeration value="EN_ROUTE"/>
-         <enumeration value="ARRIVAL"/>
-         <enumeration value="ON_FINAL"/>
-         <enumeration value="MISSED_APPROACH"/>
-         <enumeration value="ON_RUNWAY"/>
-         <enumeration value="AMA_TAXI_IN"/>
-         <enumeration value="RAMP_TAXI_IN"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="AtcStateValueType">
-      <annotation>
-         <documentation>
-            Defines the values for TFDM atc flight state. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="CD"/>
-         <enumeration value="CD_CLEARANCE"/>
-         <enumeration value="GC_PENDING"/>
-         <enumeration value="GC"/>
-         <enumeration value="HOLD"/>
-         <enumeration value="LC"/>
-         <enumeration value="LUAW"/>
-         <enumeration value="CLEARED_FOR_TAKEOFF"/>
-         <enumeration value="DEPARTED"/>
-         <enumeration value="ARCHIVE"/>
-         <enumeration value="LC_PENDING"/>
-         <enumeration value="CLEARED_TO_LAND"/>
-      </restriction>
-   </simpleType>
-
-   <complexType name="NasFlightStatusType">
-      <annotation>
-         <documentation>
-            Identifies the aspect of the flight life cycle. 
-         </documentation>
-      </annotation>
-      <sequence>
-         <element name="tfdmAtcFlightState" type="nas:TfdmAtcFlightStateType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  Provides the status for a flight from an ATC perspective 
-               </documentation>
-            </annotation>
-         </element>
-         <element name="tfdmFlightState" type="nas:TfdmFlightStateType" minOccurs="0" maxOccurs="1" > 
-            <annotation>
-               <documentation>
-                  Provides the actual status for a flight in relation to its movement phase 
-               </documentation>
-            </annotation>
-         </element>
-         <element name="tfmsCancellationReason" type="nas:CancellationStatusReasonType" minOccurs="0" maxOccurs="2000" > 
-            <annotation>
-               <documentation>
-                  Provides the reason for a flight cancellation from a Traffic Flow Management Program. 
-                  
-               </documentation>
-            </annotation>
-         </element>
-      </sequence>
-      <attribute name="airborneHold" type="nas:AirborneHoldIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Specifies whether or not the aircraft is in an airborne hold. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="sfdpsFlightStatus" type="nas:SfdpsFlightStatusType" use="optional" > 
-         <annotation>
-            <documentation>
-               Represents the current status of the flight as specified by the SWIM SFDPS. 
-               Status: Identification of the current aspect of the flight life cycle as determined 
-               by the SWIM Flight Data Publication Service (SFDPS). 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="starsFlightStatus" type="nas:StarsFlightStatusType" use="optional" > 
-         <annotation>
-            <documentation>
-               STARS flight type. Arrival (A), Departure (P or D), or Enroute (E). 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="tfmsFlightStatus" type="nas:TfmsFlightStatusType" use="optional" > 
-         <annotation>
-            <documentation>
-               Indicates the current status of the flight, as determined by Traffic Flow Management 
-               System (TFMS). 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="NasFlightStatus" type="nas:NasFlightStatusType" /> 
-
-   <simpleType name="StarsFlightStatusType">
-      <annotation>
-         <documentation>
-            STARS flight type. Arrival (A), Departure (P or D), or Enroute (E). 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="ARRIVAL"/>
-         <enumeration value="DEPARTURE"/>
-         <enumeration value="ENROUTE"/>
-      </restriction>
-   </simpleType>
-
-   <complexType name="TfdmAtcFlightStateType">
-      <annotation>
-         <documentation>
-            Provides the status for a flight from an ATC perspective 
-         </documentation>
-      </annotation>
-      <complexContent>
-         <extension base="nas:ProvenanceType">
-            <attribute name="value" type="nas:AtcStateValueType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     Defines the values for TFDM atc flight state. 
-                  </documentation>
-               </annotation>
-            </attribute>
-         </extension>
-      </complexContent>
-   </complexType>
-   <element name="TfdmAtcFlightState" type="nas:TfdmAtcFlightStateType" substitutionGroup="nas:Provenance" /> 
-
-   <complexType name="TfdmFlightStateType">
-      <annotation>
-         <documentation>
-            Provides the actual status for a flight in relation to its movement phase 
-         </documentation>
-      </annotation>
-      <complexContent>
-         <extension base="nas:ProvenanceType">
-            <attribute name="value" type="nas:AircraftMovementStateValueType" use="optional" > 
-               <annotation>
-                  <documentation>
-                     Defines values for the TFDM aircraft movement flight state. 
-                  </documentation>
-               </annotation>
-            </attribute>
-         </extension>
-      </complexContent>
-   </complexType>
-   <element name="TfdmFlightState" type="nas:TfdmFlightStateType" substitutionGroup="nas:Provenance" /> 
-
-   <simpleType name="AirborneHoldIndicatorType">
-      <annotation>
-         <documentation>
-            Specifies whether or not the aircraft is in an airborne hold. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="AIRBORNE_HOLD"/>
-         <enumeration value="NOT_AIRBORNE_HOLD"/>
-      </restriction>
-   </simpleType>
-
    <simpleType name="CancellationStatusReasonType">
       <annotation>
          <documentation>
-            Provides the reason for a flight cancellation from a Traffic Flow Management Program. 
-            
+            .Traffic Flow Management Cancellation Status Reason: Provides the reason for a flight 
+            cancellation from a Traffic Flow Management Program. 
          </documentation>
       </annotation>
       <restriction base="xs:string">
@@ -264,12 +79,51 @@
       </restriction>
    </simpleType>
 
+   <complexType name="NasFlightStatusType">
+      <annotation>
+         <documentation>
+            Extends core: Flight Status: Identifies the aspect of the flight life cycle. this 
+            allows for NAS specific handling. 
+         </documentation>
+      </annotation>
+      <complexContent>
+         <extension base="fx:FlightStatusType">
+            <attribute name="fdpsFlightStatus" type="nas:SfdpsFlightStatusType" use="optional" > 
+               <annotation>
+                  <documentation>
+                     Represents the current status of the flight as specified by the SWIM SFDPS. 
+                     .SFDPS Flight Status: Identification of the current aspect of the flight life cycle 
+                     as determined by the SWIM Flight Data Publication Service (SFDPS). 
+                  </documentation>
+               </annotation>
+            </attribute>
+            <attribute name="tfmsCancellationReason" type="nas:CancellationStatusReasonType" use="optional" > 
+               <annotation>
+                  <documentation>
+                     .Traffic Flow Management Cancellation Status Reason: Provides the reason for a flight 
+                     cancellation from a Traffic Flow Management Program. 
+                  </documentation>
+               </annotation>
+            </attribute>
+            <attribute name="tfmsFlightStatus" type="nas:TfmsFlightStatusType" use="optional" > 
+               <annotation>
+                  <documentation>
+                     .Traffic Flow Management System Flight Status: Indicates the current status of the 
+                     flight, as determined by Traffic Flow Management System (TFMS). 
+                  </documentation>
+               </annotation>
+            </attribute>
+         </extension>
+      </complexContent>
+   </complexType>
+   <element name="NasFlightStatus" type="nas:NasFlightStatusType" substitutionGroup="fb:Feature" /> 
+
    <simpleType name="SfdpsFlightStatusType">
       <annotation>
          <documentation>
             Represents the current status of the flight as specified by the SWIM SFDPS. 
-            Identification of the current aspect of the flight life cycle as determined by the 
-            SWIM Flight Data Publication Service (SFDPS). 
+            .SFDPS Flight Status: Identification of the current aspect of the flight life cycle 
+            as determined by the SWIM Flight Data Publication Service (SFDPS). 
          </documentation>
       </annotation>
       <restriction base="xs:string">
@@ -317,8 +171,8 @@
    <simpleType name="TfmsFlightStatusType">
       <annotation>
          <documentation>
-            Indicates the current status of the flight, as determined by Traffic Flow Management 
-            System (TFMS). 
+            .Traffic Flow Management System Flight Status: Indicates the current status of the 
+            flight, as determined by Traffic Flow Management System (TFMS). 
          </documentation>
       </annotation>
       <restriction base="xs:string">

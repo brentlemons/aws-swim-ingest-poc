@@ -2,18 +2,15 @@
 <schema
    attributeFormDefault="unqualified"
    elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/4.2"
-   version="4.2.1"
+   targetNamespace="http://www.faa.aero/nas/3.2"
+   version="3.2"
    xmlns="http://www.w3.org/2001/XMLSchema"
-   xmlns:fb="http://www.fixm.aero/base/4.1"
-   xmlns:fx="http://www.fixm.aero/flight/4.1"
-   xmlns:mesg="http://www.fixm.aero/messaging/4.1"
-   xmlns:nas="http://www.faa.aero/nas/4.2"
+   xmlns:nas="http://www.faa.aero/nas/3.2"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2018 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -51,9 +48,6 @@
          Details on the US FAA: http://www.faa.gov/ 
       </documentation>
    </annotation>
-   <import namespace="http://www.fixm.aero/base/4.1" schemaLocation="./../../../schemas/core/base/Base.xsd"/>
-   <import namespace="http://www.fixm.aero/flight/4.1" schemaLocation="./../../../schemas/core/flight/Flight.xsd"/>
-   <import namespace="http://www.fixm.aero/messaging/4.1" schemaLocation="./../../../schemas/core/messaging/Messaging.xsd"/>
    <annotation>
       <documentation>
          Contains information about flight's compliance to Traffic Management Initiatives. 
@@ -61,66 +55,12 @@
       </documentation>
    </annotation>
 
-   <complexType name="TmiComplianceType">
-      <annotation>
-         <documentation>
-            Container for Traffic Management Initiative Compliance Indicators 
-         </documentation>
-      </annotation>
-      <attribute name="cancelledButFlewIndicator" type="nas:CanceledButFlewIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Indicates for both a Ground Delay Program and and Airspace Flow Program that a flight 
-               that had a status of cancelled at the time that it was activated by a NAS message 
-               and then it operated. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="ctaCompliance" type="nas:TmiComplianceIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Indicates the flight's actual arrival compliance at an airport (for a Ground Delay 
-               Program) or at a Flow Constrained Area (for an Airspace Flow Program) in reference 
-               to the controlled time of arrival issued. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="ctdCompliance" type="nas:TmiComplianceIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               This element indicates that a flight took off outside the Controlled Time of Departure 
-               compliance window (for both Ground Delay Program and Airspace Flow Program) 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="etEnRouteCompliance" type="nas:TmiComplianceIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Indicates the flight's actual en route flying time between the departure and the 
-               destination airports (for a Ground Delay Program) or from the departure airport to 
-               the Flow Constraint Area entry point was outside the compliance time range. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="spuriousFlightIndicator" type="nas:SpuriousFlightIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Indicates for both a Ground Delay Program and and Airspace Flow Program that a flight 
-               that was not scheduled (that is, was created on that day from a CDM message or flight 
-               plan), was controlled in a Traffic Management Initiative and was cancelled by a CDM 
-               message. 
-            </documentation>
-         </annotation>
-      </attribute>
-   </complexType>
-   <element name="TmiCompliance" type="nas:TmiComplianceType" /> 
-
    <simpleType name="CanceledButFlewIndicatorType">
       <annotation>
          <documentation>
-            Indicates for both a Ground Delay Program and and Airspace Flow Program that a flight 
-            that had a status of cancelled at the time that it was activated by a NAS message 
-            and then it operated. 
+            .Cancelled But Flew Indicator: Indicates for both a Ground Delay Program and and 
+            Airspace Flow Program that a flight that had a status of cancelled at the time that 
+            it was activated by a NAS message and then it operated. 
          </documentation>
       </annotation>
       <restriction base="xs:string">
@@ -131,16 +71,72 @@
    <simpleType name="SpuriousFlightIndicatorType">
       <annotation>
          <documentation>
-            Indicates for both a Ground Delay Program and and Airspace Flow Program that a flight 
-            that was not scheduled (that is, was created on that day from a CDM message or flight 
-            plan), was controlled in a Traffic Management Initiative and was cancelled by a CDM 
-            message. 
+            .Spurious Flight Indicator: Indicates for both a Ground Delay Program and and Airspace 
+            Flow Program that a flight that was not scheduled (that is, was created on that day 
+            from a CDM message or flight plan), was controlled in a Traffic Management Initiative 
+            and was cancelled by a CDM message. 
          </documentation>
       </annotation>
       <restriction base="xs:string">
          <enumeration value="SPURIOUS_FLIGHT"/>
       </restriction>
    </simpleType>
+
+   <complexType name="TmiComplianceType">
+      <annotation>
+         <documentation>
+            Container for Traffic Management Initiative Compliance Indicators 
+         </documentation>
+      </annotation>
+      <attribute name="cancelledButFlewIndicator" type="nas:CanceledButFlewIndicatorType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Cancelled But Flew Indicator: Indicates for both a Ground Delay Program and and 
+               Airspace Flow Program that a flight that had a status of cancelled at the time that 
+               it was activated by a NAS message and then it operated. 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="ctaCompliance" type="nas:TmiComplianceIndicatorType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Controlled Time Of Arrival Compliance: Indicates the flight's actual arrival compliance 
+               at an airport (for a Ground Delay Program) or at a Flow Constrained Area (for an 
+               Airspace Flow Program) in reference to the controlled time of arrival issued. 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="ctdCompliance" type="nas:TmiComplianceIndicatorType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Controlled Time Of Departure Compliance: This element indicates that a flight took 
+               off outside the Controlled Time of Departure compliance window (for both Ground Delay 
+               Program and Airspace Flow Program) 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="etEnRouteCompliance" type="nas:TmiComplianceIndicatorType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Estimated Time Enroute Compliance: Indicates the flight's actual en route flying 
+               time between the departure and the destination airports (for a Ground Delay Program) 
+               or from the departure airport to the Flow Constraint Area entry point was outside 
+               the compliance time range. 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="spuriousFlightIndicator" type="nas:SpuriousFlightIndicatorType" use="optional" > 
+         <annotation>
+            <documentation>
+               .Spurious Flight Indicator: Indicates for both a Ground Delay Program and and Airspace 
+               Flow Program that a flight that was not scheduled (that is, was created on that day 
+               from a CDM message or flight plan), was controlled in a Traffic Management Initiative 
+               and was cancelled by a CDM message. 
+            </documentation>
+         </annotation>
+      </attribute>
+   </complexType>
+   <element name="TmiCompliance" type="nas:TmiComplianceType" /> 
 
    <simpleType name="TmiComplianceIndicatorType">
       <annotation>
@@ -151,7 +147,6 @@
       </annotation>
       <restriction base="xs:string">
          <enumeration value="COMPLIANT"/>
-         <enumeration value="NON_COMPLIANT"/>
       </restriction>
    </simpleType>
 </schema>

@@ -16,31 +16,6 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-    implementation group: 'org.springframework', name:'spring-jms'
-    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
-
-	implementation group: 'com.solacesystems', name: 'sol-jms', version: '10.6.4'
-	implementation group: 'com.solacesystems', name: 'sol-jcsmp', version: '10.6.4'
-
-	implementation group: 'software.amazon.awssdk', name: 'kinesis', version: '2.10.80'
-
-    jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.4'
-
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-}
-
-
-task buildZip(type: Zip) {
-    from compileJava
-    from processResources
-    into('lib') {
-        from configurations.runtime
-    }
-}
 
 task genJaxb {
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
@@ -62,7 +37,7 @@ task genJaxb {
             
             xjc(destdir: sourcesDir) {
                 schema(dir: schemaDir, includes: "**/*.xsd")
-            	binding(dir: bindingsDir, includes: "**/*.xjb")
+//            	binding(dir: bindingsDir, includes: "**/*.xjb")
                 produces(dir: sourcesDir, includes: "**/*.java")
             }
 
@@ -83,5 +58,36 @@ task genJaxb {
     }
 }
 
-build.dependsOn genJaxb
+dependencies {
+	implementation 'com.sun.xml.bind:jaxb-xjc:2.2.4'
+	implementation 'org.springframework.boot:spring-boot-starter'
+    implementation group: 'org.springframework', name:'spring-jms'
+	implementation group: 'org.springframework', name: 'spring-oxm', version: '5.2.4.RELEASE'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.3'
+
+	implementation group: 'com.solacesystems', name: 'sol-jms', version: '10.6.4'
+	implementation group: 'com.solacesystems', name: 'sol-jcsmp', version: '10.6.4'
+
+	implementation group: 'software.amazon.awssdk', name: 'kinesis', version: '2.10.80'
+
+    implementation(files(genJaxb.classesDir).builtBy(genJaxb))
+
+    jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.4'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+task buildZip(type: Zip) {
+    from genJaxb
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtime
+    }
+}
+
+//build.dependsOn genJaxb
 build.dependsOn buildZip

@@ -2,18 +2,16 @@
 <schema
    attributeFormDefault="unqualified"
    elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/4.2"
-   version="4.2.1"
+   targetNamespace="http://www.faa.aero/nas/3.2"
+   version="3.2"
    xmlns="http://www.w3.org/2001/XMLSchema"
-   xmlns:fb="http://www.fixm.aero/base/4.1"
-   xmlns:fx="http://www.fixm.aero/flight/4.1"
-   xmlns:mesg="http://www.fixm.aero/messaging/4.1"
-   xmlns:nas="http://www.faa.aero/nas/4.2"
+   xmlns:fb="http://www.fixm.aero/base/3.0"
+   xmlns:nas="http://www.faa.aero/nas/3.2"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2018 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -51,9 +49,7 @@
          Details on the US FAA: http://www.faa.gov/ 
       </documentation>
    </annotation>
-   <import namespace="http://www.fixm.aero/base/4.1" schemaLocation="./../../../schemas/core/base/Base.xsd"/>
-   <import namespace="http://www.fixm.aero/flight/4.1" schemaLocation="./../../../schemas/core/flight/Flight.xsd"/>
-   <import namespace="http://www.fixm.aero/messaging/4.1" schemaLocation="./../../../schemas/core/messaging/Messaging.xsd"/>
+   <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
    <annotation>
       <documentation>
          Contains the definition of Flight Plan, which is a specifically preserved in the 
@@ -68,79 +64,27 @@
             
          </documentation>
       </annotation>
-      <attribute name="flightPlanRemarks" type="fb:CharacterStringType" use="optional" > 
-         <annotation>
-            <documentation>
-               NAS Flight Plan Field 11 remarks processed by the Traffic Flow Management System 
-               (TFMS) and used for TFM purposes. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="identifier" type="fb:CharacterStringType" use="optional" > 
-         <annotation>
-            <documentation>
-               The flight plan identifier is used to uniquely name a flight plan within the scope 
-               of its flight. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="starsFlightPlanDeletedIndicator" type="nas:StarsFlightPlanDeletedIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Indicates if a flight plan and associated data are deleted. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="starsFlightPlanStatus" type="nas:StarsFlightPlanStatusType" use="optional" > 
-         <annotation>
-            <documentation>
-               Flight Plan Status: Pending, Active, Terminated, Passive. 
-            </documentation>
-         </annotation>
-      </attribute>
-      <attribute name="starsFlightPlanSuspendedIndicator" type="nas:StarsFlightPlanSuspendedIndicatorType" use="optional" > 
-         <annotation>
-            <documentation>
-               Flight plan suspended. 
-            </documentation>
-         </annotation>
-      </attribute>
+      <complexContent>
+         <extension base="fb:FeatureType">
+            <attribute name="flightPlanRemarks" type="fb:FreeTextType" use="optional" > 
+               <annotation>
+                  <documentation>
+                     .Traffic Flow Management System Flight Plan Remarks: NAS Flight Plan Field 11 remarks 
+                     processed by the Traffic Flow Management System (TFMS) and used for TFM purposes. 
+                     
+                  </documentation>
+               </annotation>
+            </attribute>
+            <attribute name="identifier" type="fb:FreeTextType" use="optional" > 
+               <annotation>
+                  <documentation>
+                     .Flight Plan Identifier: The flight plan identifier is used to uniquely name a flight 
+                     plan within the scope of its flight. 
+                  </documentation>
+               </annotation>
+            </attribute>
+         </extension>
+      </complexContent>
    </complexType>
-   <element name="NasFlightPlan" type="nas:NasFlightPlanType" /> 
-
-   <simpleType name="StarsFlightPlanDeletedIndicatorType">
-      <annotation>
-         <documentation>
-            Indicates if a flight plan and associated data are deleted. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="DELETED"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="StarsFlightPlanStatusType">
-      <annotation>
-         <documentation>
-            Flight Plan Status: Pending, Active, Terminated, Passive. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="PENDING"/>
-         <enumeration value="ACTIVE"/>
-         <enumeration value="TERMINATED"/>
-         <enumeration value="PASSIVE"/>
-      </restriction>
-   </simpleType>
-
-   <simpleType name="StarsFlightPlanSuspendedIndicatorType">
-      <annotation>
-         <documentation>
-            Flight plan suspended. 
-         </documentation>
-      </annotation>
-      <restriction base="xs:string">
-         <enumeration value="SUSPENDED"/>
-      </restriction>
-   </simpleType>
+   <element name="NasFlightPlan" type="nas:NasFlightPlanType" substitutionGroup="fb:Feature" /> 
 </schema>

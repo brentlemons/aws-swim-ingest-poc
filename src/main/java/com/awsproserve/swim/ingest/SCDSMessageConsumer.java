@@ -3,6 +3,8 @@
  */
 package com.awsproserve.swim.ingest;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -10,12 +12,27 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import aero.faa.nas._3.AbstractMessageType;
+import aero.faa.nas._3.FlightMessageType;
+import aero.faa.nas._3.MessageCollectionType;
+import aero.faa.nas._3.NasFlightType;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.model.KinesisResponseMetadata;
@@ -28,13 +45,25 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
  */
 public class SCDSMessageConsumer implements MessageListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(SCDSMessageConsumer.class);
-
 	@Autowired
 	KinesisAsyncClient kinesisClient;
 
+	@Autowired
+	private Jaxb2Marshaller  marshaller;
+
 	@Value("${aws.kinesis.stream}")
 	private String stream;
+
+	private static final Logger logger = LoggerFactory.getLogger(SCDSMessageConsumer.class);
+    private ObjectMapper mapper;
+    
+    public SCDSMessageConsumer() {
+		this.mapper = new ObjectMapper();
+		this.mapper.registerModule(new JavaTimeModule());
+		this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);	
+		this.mapper.setSerializationInclusion(Include.NON_NULL);
+		this.mapper.setSerializationInclusion(Include.NON_EMPTY);    	
+    }
 
 	@Override
 	public void onMessage(Message message) {
@@ -49,23 +78,44 @@ public class SCDSMessageConsumer implements MessageListener {
 				
 				TextMessage txtMsg = (TextMessage) message;
 				String msgTextObj = txtMsg.getText();
-				logger.debug("message: " + msgTextObj);
-				CompletableFuture<PutRecordResponse> myResult = kinesisClient.putRecord(
-		                PutRecordRequest.builder()
-		                                .streamName(this.stream)
-		                                .partitionKey(routingKey)
-//		                                .data(SdkBytes.fromByteArray(compress(this.mapper.writeValueAsBytes(nasFlight))))
-		                                .data(SdkBytes.fromUtf8String(msgTextObj.toString()))
-		                                .build());
+
 				try {
-					PutRecordResponse prr = myResult.get();
-					KinesisResponseMetadata stuff = prr.responseMetadata();
+					JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
+					List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
+
+					for (AbstractMessageType msg : messages) {
+						if (msg.getClass() == FlightMessageType.class) {
+							NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
+							if (nasFlight.getSource() != null) {
+								logger.info(this.mapper.writeValueAsString(nasFlight));
+							}
+						}
+
+//					logger.debug("message: " + msgTextObj);
+//					CompletableFuture<PutRecordResponse> myResult = kinesisClient.putRecord(
+//			                PutRecordRequest.builder()
+//			                                .streamName(this.stream)
+//			                                .partitionKey(routingKey)
+//	//		                                .data(SdkBytes.fromByteArray(compress(this.mapper.writeValueAsBytes(nasFlight))))
+//	//		                                .data(SdkBytes.fromUtf8String(msgTextObj.toString()))
+//			                                .data(SdkBytes.fromUtf8String(this.mapper.writeValueAsBytes(nasFlight)))
+//			                                .build());
+//
+//					PutRecordResponse prr = myResult.get();
+//					KinesisResponseMetadata stuff = prr.responseMetadata();
 					
-					logger.debug(stuff.toString());
-				} catch (InterruptedException e) {
+//					logger.debug(stuff.toString());
+					}
+				} catch (JAXBException e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
+					e1.printStackTrace();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (ExecutionException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -77,5 +127,15 @@ public class SCDSMessageConsumer implements MessageListener {
 		}
 
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T unmarshallXml(final StreamSource streamSource) throws JAXBException {
+		return (T) marshaller.unmarshal(streamSource);
+	}
+	
+    //Converts XML to Java Object
+    public Object xmlToObject(String xml) throws JAXBException {
+    	return unmarshallXml(new StreamSource(new java.io.StringReader(xml)));
+    }
 
 }

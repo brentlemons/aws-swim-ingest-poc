@@ -2,18 +2,16 @@
 <schema
    attributeFormDefault="unqualified"
    elementFormDefault="qualified"
-   targetNamespace="http://www.faa.aero/nas/4.2"
-   version="4.2.1"
+   targetNamespace="http://www.faa.aero/nas/3.2"
+   version="3.2"
    xmlns="http://www.w3.org/2001/XMLSchema"
-   xmlns:fb="http://www.fixm.aero/base/4.1"
-   xmlns:fx="http://www.fixm.aero/flight/4.1"
-   xmlns:mesg="http://www.fixm.aero/messaging/4.1"
-   xmlns:nas="http://www.faa.aero/nas/4.2"
+   xmlns:fb="http://www.fixm.aero/base/3.0"
+   xmlns:nas="http://www.faa.aero/nas/3.2"
    xmlns:xs="http://www.w3.org/2001/XMLSchema">
    
    <annotation>
       <documentation>
-         Copyright (c) 2018 US Federal Aviation Administration (FAA) 
+         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
          =========================================== 
          All rights reserved. 
           
@@ -51,9 +49,7 @@
          Details on the US FAA: http://www.faa.gov/ 
       </documentation>
    </annotation>
-   <import namespace="http://www.fixm.aero/base/4.1" schemaLocation="./../../../schemas/core/base/Base.xsd"/>
-   <import namespace="http://www.fixm.aero/flight/4.1" schemaLocation="./../../../schemas/core/flight/Flight.xsd"/>
-   <import namespace="http://www.fixm.aero/messaging/4.1" schemaLocation="./../../../schemas/core/messaging/Messaging.xsd"/>
+   <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
    <annotation>
       <documentation>
          The NasAerodrome package contains the US specific extensions to the FIXM core Aerodrome 
@@ -69,12 +65,12 @@
          </documentation>
       </annotation>
       <simpleContent>
-         <extension base="fb:SidStarDesignatorType">
+         <extension base="fb:StandardInstrumentRouteDesignatorType">
             <attribute name="routeType" type="nas:TfmsRouteTypeType" use="optional" > 
                <annotation>
                   <documentation>
-                     Provides the route type for a Departure Procedure or a Standard Instrument Arrival 
-                     
+                     .Traffic Flow Management System Route Type: Provides the route type for a Departure 
+                     Procedure or a Standard Instrument Arrival 
                   </documentation>
                </annotation>
             </attribute>
@@ -85,8 +81,8 @@
    <simpleType name="TfmsRouteTypeType">
       <annotation>
          <documentation>
-            Provides the route type for a Departure Procedure or a Standard Instrument Arrival 
-            
+            .Traffic Flow Management System Route Type: Provides the route type for a Departure 
+            Procedure or a Standard Instrument Arrival 
          </documentation>
       </annotation>
       <restriction base="xs:string">

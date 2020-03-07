@@ -72,6 +72,13 @@ Resources:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref PublicRouteTable
 
+  SwimIngestStream: 
+    Type: AWS::Kinesis::Stream 
+    Properties: 
+#      Name: SwimIngestKinesisStream 
+      RetentionPeriodHours: 24 
+      ShardCount: 3 
+
   SwimIngestECSServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -94,17 +101,18 @@ Resources:
                 - 'ssm:GetParameters'
                 Effect: Allow
                 Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim*'
+        - PolicyName: ECSWriteKinesis
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'kinesis:PutRecord'
+                Effect: Allow
+                Resource: !GetAtt SwimIngestStream.Arn
 
   SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
     
-  SwimIngestStream: 
-    Type: AWS::Kinesis::Stream 
-    Properties: 
-#      Name: SwimIngestKinesisStream 
-      RetentionPeriodHours: 24 
-      ShardCount: 3 
-
   FDPSSwimIngestTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties: 

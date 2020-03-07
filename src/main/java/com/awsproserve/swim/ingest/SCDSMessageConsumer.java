@@ -4,6 +4,7 @@
 package com.awsproserve.swim.ingest;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
+import software.amazon.awssdk.services.kinesis.model.KinesisResponseMetadata;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 
@@ -55,6 +57,18 @@ public class SCDSMessageConsumer implements MessageListener {
 //		                                .data(SdkBytes.fromByteArray(compress(this.mapper.writeValueAsBytes(nasFlight))))
 		                                .data(SdkBytes.fromUtf8String(msgTextObj.toString()))
 		                                .build());
+				try {
+					PutRecordResponse prr = myResult.get();
+					KinesisResponseMetadata stuff = prr.responseMetadata();
+					
+					logger.info(stuff.toString());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		} catch (JMSException ex) {

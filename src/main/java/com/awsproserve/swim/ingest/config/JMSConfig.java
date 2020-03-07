@@ -12,9 +12,6 @@ import org.springframework.jms.core.JmsTemplate;
 
 import org.springframework.jndi.JndiTemplate;
 
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
 import com.awsproserve.swim.ingest.SCDSMessageConsumer;
 
 import org.springframework.jndi.JndiObjectFactoryBean;
@@ -50,7 +47,7 @@ public class JMSConfig {
         jndiProps.setProperty("java.naming.security.principal", jndiPrincipal);
         jndiProps.setProperty("java.naming.security.credentials", jndiCredentials);
         jndiProps.setProperty("Solace_JMS_VPN", jndiVpn);
-
+        
         jndiTemplate.setEnvironment(jndiProps);
 
         return jndiTemplate;

@@ -20,8 +20,7 @@ dependencies {
 	implementation group: 'com.solacesystems', name: 'sol-jms', version: '10.6.4'
 	implementation group: 'com.solacesystems', name: 'sol-jcsmp', version: '10.6.4'
 
-	implementation group: 'com.amazonaws', name: 'aws-java-sdk-ssm', version: '1.11.716'
-
+	implementation group: 'software.amazon.awssdk', name: 'kinesis', version: '2.10.80'
 
 //    implementation name: 'sol-jms-7.1.2.226'
 //    implementation name: 'sol-jcsmp-7.1.2.226'

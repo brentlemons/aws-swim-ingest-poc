@@ -17,7 +17,7 @@ Resources:
       - Key: Name
         Value: !Sub '${AWS::StackName}-vpc'
         
-  bklSecurityGroup:
+  SwimSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: allow connections from specified CIDR ranges
@@ -34,14 +34,11 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.76.3.0/24
-#      AvailabilityZone: !Ref AvailabilityZone
       VpcId:
         Ref: VPC
       Tags:
       - Key: Name
         Value: !Sub '${AWS::StackName}-public-subnet'
-
-
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -56,13 +53,10 @@ Resources:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
 
-
-
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
-
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -72,15 +66,13 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-
-
   PublicSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref PublicRouteTable
 
-  MyECSServiceRole:
+  SwimIngestECSServiceRole:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
@@ -94,26 +86,33 @@ Resources:
             Service: ecs-tasks.amazonaws.com
       Path: /
       Policies:
-        - PolicyName: MyECSAccessParameters
+        - PolicyName: ECSAccessParameters
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim*'
 
-  bklClusterFromCF:
+  SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
+    
+  SwimIngestStream: 
+    Type: AWS::Kinesis::Stream 
+    Properties: 
+#      Name: SwimIngestKinesisStream 
+      RetentionPeriodHours: 24 
+      ShardCount: 3 
 
-  bklTaskDefinitionFromCF:
+  FDPSSwimIngestTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties: 
       RequiresCompatibilities: 
         - 'FARGATE'
       ContainerDefinitions: 
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
-          Image: !Sub '247395643054.dkr.ecr.us-east-1.amazonaws.com/swim-testing'
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/swim-testing'
           Essential: 'true'
           Memory: '300'
           LogConfiguration:
@@ -122,23 +121,40 @@ Resources:
               awslogs-group: !Sub '/ecs/bkl-test'
               awslogs-region: 'us-east-1'
               awslogs-stream-prefix: 'ecs'
+          Environment:
+            - Name: AWS_KINESIS_STREAM
+              Value: !Ref SwimIngestStream
           Secrets:
             - Name: SWIM_JNDI_CONTEXT_FACTORY
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/context_factory'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/context_factory'
             - Name: SWIM_JNDI_HOST
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/host'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/host'
             - Name: SWIM_JNDI_PRINCIPAL
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/principal'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/principal'
             - Name: SWIM_JNDI_CREDENTIALS
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/credentials'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/credentials'
             - Name: SWIM_JNDI_VPN
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/vpn'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/vpn'
             - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/connection_factory_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jms/connection_factory_name'
             - Name: SWIM_JMS_QUEUE_NAME
-              ValueFrom: 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
-      TaskRoleArn: !Ref MyECSServiceRole
-      ExecutionRoleArn: !Ref MyECSServiceRole
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jms/queue_name'
+#            - Name: SWIM_JNDI_CONTEXT_FACTORY
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/context_factory'
+#            - Name: SWIM_JNDI_HOST
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/host'
+#            - Name: SWIM_JNDI_PRINCIPAL
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/principal'
+#            - Name: SWIM_JNDI_CREDENTIALS
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/credentials'
+#            - Name: SWIM_JNDI_VPN
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/vpn'
+#            - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/connection_factory_name'
+#            - Name: SWIM_JMS_QUEUE_NAME
+#              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
+      TaskRoleArn: !Ref SwimIngestECSServiceRole
+      ExecutionRoleArn: !Ref SwimIngestECSServiceRole
       Memory: '2GB'
       Cpu: '1 vCPU'
       NetworkMode: 'awsvpc'
@@ -156,43 +172,23 @@ Resources:
 #      Volumes: 
 #        - Volume
 
-  bklSwimService:
+  FDPSSwimIngestService:
     Type: AWS::ECS::Service
     Properties: 
-      Cluster: !Ref bklClusterFromCF
+      Cluster: !Ref SwimIngestECSCluster
       LaunchType: 'FARGATE'
-      TaskDefinition: !Ref bklTaskDefinitionFromCF
-      ServiceName: !Sub 'brentkl-service'
+      TaskDefinition: !Ref FDPSSwimIngestTaskDefinition
+      ServiceName: !Sub 'fdps-swim-ingest-service'
       DesiredCount: 1
       DeploymentController: 
         Type: 'ECS'
-#      Role: !Ref MyECSServiceRole
       NetworkConfiguration: 
         AwsvpcConfiguration:
           AssignPublicIp: 'ENABLED'
           Subnets: 
             - !Ref PublicSubnet
           SecurityGroups: 
-            - !Ref bklSecurityGroup
-
-#      PlatformVersion: String
-#      DeploymentConfiguration: 
-#        DeploymentConfiguration
-#      EnableECSManagedTags: Boolean
-#      HealthCheckGracePeriodSeconds: Integer
-#      LoadBalancers: 
-#        - LoadBalancer
-#      PlacementConstraints: 
-#        - PlacementConstraint
-#      PlacementStrategies: 
-#        - PlacementStrategy
-#      PropagateTags: String
-#      SchedulingStrategy: String
-#      ServiceRegistries: 
-#        - ServiceRegistry
-#      Tags: 
-#        - Tag
-
-
+            - !Ref SwimSecurityGroup
+            
 
 #Outputs:

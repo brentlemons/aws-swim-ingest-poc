@@ -1,80 +1,254 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: Template for the CodePipeline resources
-
-Resources:
-
-  MyECSServiceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Action: sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service: ecs-tasks.amazonaws.com
-      Path: /
-      Policies:
-        - PolicyName: MyECSAccessParameters
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Action:
-                - 'ssm:GetParameters'
-                Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes*'
-
-#  CodeBuildServiceRole:
+#AWSTemplateFormatVersion: "2010-09-09"
+#Description: Template for the CodePipeline resources
+#
+#Resources:
+#
+#  MyECSServiceRole:
 #    Type: AWS::IAM::Role
 #    Properties:
-##      ManagedPolicyArns:
-##        - 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser'
-##        - 'arn:aws:iam::aws:policy/AWSCodeCommitPowerUser'
+#      ManagedPolicyArns:
+#        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
 #      AssumeRolePolicyDocument:
 #        Version: '2012-10-17'
 #        Statement:
 #        - Action: sts:AssumeRole
 #          Effect: Allow
 #          Principal:
-#            Service: codebuild.amazonaws.com
+#            Service: ecs-tasks.amazonaws.com
 #      Path: /
 #      Policies:
-#        - PolicyName: CodeBuildAccess
+#        - PolicyName: MyECSAccessParameters
 #          PolicyDocument:
 #            Version: '2012-10-17'
 #            Statement:
 #              - Action:
-#                - 'logs:CreateLogGroup'
-#                - 'logs:CreateLogStream'
-#                - 'logs:PutLogEvents'
+#                - 'ssm:GetParameters'
 #                Effect: Allow
-#                Resource: '*'
-#              - Action:
-#                - s3:PutObject
-#                - s3:GetObject
-#                - s3:GetObjectVersion
-#                Effect: Allow
-#                Resource: !Sub 'arn:aws:s3:::*/*'
+#                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes*'
+#
+##  CodeBuildServiceRole:
+##    Type: AWS::IAM::Role
+##    Properties:
+###      ManagedPolicyArns:
+###        - 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser'
+###        - 'arn:aws:iam::aws:policy/AWSCodeCommitPowerUser'
+##      AssumeRolePolicyDocument:
+##        Version: '2012-10-17'
+##        Statement:
+##        - Action: sts:AssumeRole
+##          Effect: Allow
+##          Principal:
+##            Service: codebuild.amazonaws.com
+##      Path: /
+##      Policies:
+##        - PolicyName: CodeBuildAccess
+##          PolicyDocument:
+##            Version: '2012-10-17'
+##            Statement:
 ##              - Action:
-##                - cloudformation:*
+##                - 'logs:CreateLogGroup'
+##                - 'logs:CreateLogStream'
+##                - 'logs:PutLogEvents'
 ##                Effect: Allow
-##                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*/*'
+##                Resource: '*'
+##              - Action:
+##                - s3:PutObject
+##                - s3:GetObject
+##                - s3:GetObjectVersion
+##                Effect: Allow
+##                Resource: !Sub 'arn:aws:s3:::*/*'
+###              - Action:
+###                - cloudformation:*
+###                Effect: Allow
+###                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*/*'
+#
+##Outputs:
+#
+##  ArtifactBucketName:
+##    Value: !Ref ArtifactBucketName
+##    Export:
+##      Name: !Sub ${AWS::StackName}-ArtifactBucketName
+#
+##  CodePipelineServiceRoleArn:
+##    Value: !GetAtt CodePipelineServiceRole.Arn
+##    Export:
+##      Name: !Sub ${AWS::StackName}-CodePipelineServiceRoleArn
+#
+##  CodeBuildServiceRoleArn:
+##    Value: !GetAtt CodeBuildServiceRole.Arn
+##    Export:
+##      Name: !Sub ${AWS::StackName}-CodeBuildServiceRoleArn
 
-#Outputs:
 
-#  ArtifactBucketName:
-#    Value: !Ref ArtifactBucketName
-#    Export:
-#      Name: !Sub ${AWS::StackName}-ArtifactBucketName
 
-#  CodePipelineServiceRoleArn:
-#    Value: !GetAtt CodePipelineServiceRole.Arn
-#    Export:
-#      Name: !Sub ${AWS::StackName}-CodePipelineServiceRoleArn
 
-#  CodeBuildServiceRoleArn:
-#    Value: !GetAtt CodeBuildServiceRole.Arn
-#    Export:
-#      Name: !Sub ${AWS::StackName}-CodeBuildServiceRoleArn
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template for the CodePipeline resources
+
+Resources:
+  ArtifactBucketName:
+    Type: AWS::S3::Bucket
+
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+#      ManagedPolicyArns:
+#        - 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser'
+#        - 'arn:aws:iam::aws:policy/AWSCodeCommitPowerUser'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'logs:CreateLogGroup'
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+                Effect: Allow
+                Resource: '*'
+              - Action:
+                - s3:PutObject
+                - s3:GetObject
+                - s3:GetObjectVersion
+                Effect: Allow
+                Resource: !Sub 'arn:aws:s3:::*/*'
+#              - Action:
+#                - cloudformation:*
+#                Effect: Allow
+#                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*/*'
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - codepipeline.amazonaws.com
+            - cloudformation.amazonaws.com
+          Sid: 1
+#      Path: /
+#      ManagedPolicyArns:
+#        - arn:aws:iam::aws:policy/AmazonEC2ContainerServiceFullAccess
+      Policies:
+      - PolicyName: WorkerCodePipelineRolePolicy
+        PolicyDocument:
+          Statement:
+            - Action:
+                - iam:PassRole
+              Resource: '*'
+              Effect: Allow
+#              Condition:
+            - Action:
+                - s3:GetObject
+                - s3:GetObjectVersion
+                - s3:GetBucketVersioning
+              Resource: '*'
+              Effect: Allow
+            - Action:
+                - s3:PutObject
+              Resource: !Sub 'arn:aws:s3:::${ArtifactBucketName}/*'
+              Effect: Allow
+            - Action:
+                - dynamodb:*
+                - iam:*
+              Resource: '*'
+              Effect: Allow
+#            - Action:
+#                - elasticbeanstalk:*
+#                - ec2:*
+#                - elasticloadbalancing:*
+#                - autoscaling:*
+#                - cloudwatch:*
+#                - s3:*
+#                - sns:*
+#                - cloudformation:*
+#                - rds:*
+#                - sqs:*
+#                - ecs:*
+#              Resource: '*'
+#              Effect: Allow
+            - Action:
+                - codedeploy:CreateDeployment
+                - codedeploy:GetApplication
+                - codedeploy:GetApplicationRevision
+                - codedeploy:GetDeployment
+                - codedeploy:GetDeploymentConfig
+                - codedeploy:RegisterApplicationRevision
+              Resource: '*'
+              Effect: Allow
+            - Action:
+                - cloudformation:CreateStack
+                - cloudformation:DeleteStack
+                - cloudformation:DescribeStacks
+                - cloudformation:UpdateStack
+                - cloudformation:CreateChangeSet
+                - cloudformation:DeleteChangeSet
+                - cloudformation:DescribeChangeSet
+                - cloudformation:ExecuteChangeSet
+                - cloudformation:SetStackPolicy
+                - cloudformation:ValidateTemplate
+              Resource: '*'
+              Effect: Allow
+            - Action:
+                - lambda:AddPermission
+                - lambda:CreateFunction
+                - lambda:DeleteFunction
+                - lambda:GetFunctionConfiguration
+                - lambda:InvokeFunction
+                - lambda:ListFunctions
+                - lambda:RemovePermission
+                - lambda:UpdateFunctionCode
+                - lambda:UpdateFunctionConfiguration
+              Resource: '*'
+              Effect: Allow
+            - Action:
+                - codecommit:GetBranch
+                - codecommit:GetCommit
+                - codecommit:UploadArchive
+                - codecommit:GetUploadArchiveStatus
+                - codecommit:CancelUploadArchive
+              Resource: '*'
+              Effect: Allow
+            - Action:
+                - apigateway:DELETE
+                - apigateway:GET
+                - apigateway:PATCH
+                - apigateway:POST
+                - apigateway:PUT
+              Resource: '*'
+              Effect: Allow
+            - Action:
+                - codebuild:BatchGetBuilds
+                - codebuild:StartBuild
+              Resource: '*'
+              Effect: Allow
+
+
+Outputs:
+
+  ArtifactBucketName:
+    Value: !Ref ArtifactBucketName
+    Export:
+      Name: !Sub ${AWS::StackName}-ArtifactBucketName
+
+  CodePipelineServiceRoleArn:
+    Value: !GetAtt CodePipelineServiceRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-CodePipelineServiceRoleArn
+
+  CodeBuildServiceRoleArn:
+    Value: !GetAtt CodeBuildServiceRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-CodeBuildServiceRoleArn

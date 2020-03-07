@@ -61,7 +61,7 @@ public class SCDSMessageConsumer implements MessageListener {
 					PutRecordResponse prr = myResult.get();
 					KinesisResponseMetadata stuff = prr.responseMetadata();
 					
-					logger.info(stuff.toString());
+					logger.debug(stuff.toString());
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

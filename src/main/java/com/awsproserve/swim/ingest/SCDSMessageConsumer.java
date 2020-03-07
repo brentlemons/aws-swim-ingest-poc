@@ -79,6 +79,7 @@ public class SCDSMessageConsumer implements MessageListener {
 				TextMessage txtMsg = (TextMessage) message;
 				String msgTextObj = txtMsg.getText();
 
+//				logger.info("raw message: " + msgTextObj);
 				try {
 					JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
 					List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
@@ -87,34 +88,24 @@ public class SCDSMessageConsumer implements MessageListener {
 						if (msg.getClass() == FlightMessageType.class) {
 							NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
 							if (nasFlight.getSource() != null) {
-								logger.info(this.mapper.writeValueAsString(nasFlight));
+								
+								logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
+
+								CompletableFuture<PutRecordResponse> putRecordResponseFuture = kinesisClient.putRecord(
+						                PutRecordRequest.builder()
+						                                .streamName(this.stream)
+						                                .partitionKey(routingKey)
+				//		                                .data(SdkBytes.fromByteArray(compress(this.mapper.writeValueAsBytes(nasFlight))))
+				//		                                .data(SdkBytes.fromUtf8String(msgTextObj.toString()))
+						                                .data(SdkBytes.fromUtf8String(this.mapper.writeValueAsString(nasFlight)))
+						                                .build());
+
 							}
 						}
-
-//					logger.debug("message: " + msgTextObj);
-//					CompletableFuture<PutRecordResponse> myResult = kinesisClient.putRecord(
-//			                PutRecordRequest.builder()
-//			                                .streamName(this.stream)
-//			                                .partitionKey(routingKey)
-//	//		                                .data(SdkBytes.fromByteArray(compress(this.mapper.writeValueAsBytes(nasFlight))))
-//	//		                                .data(SdkBytes.fromUtf8String(msgTextObj.toString()))
-//			                                .data(SdkBytes.fromUtf8String(this.mapper.writeValueAsBytes(nasFlight)))
-//			                                .build());
-//
-//					PutRecordResponse prr = myResult.get();
-//					KinesisResponseMetadata stuff = prr.responseMetadata();
-					
-//					logger.debug(stuff.toString());
 					}
 				} catch (JAXBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (ExecutionException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

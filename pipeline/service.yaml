@@ -16,9 +16,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Template describing the service infrastructure
 
-Parameters:
-  CodeCommitRepoName:
-    Type: String
+#Parameters:
+#  CodeCommitRepoName:
+#    Type: String
 
 Resources:
   IamRoles:
@@ -41,5 +41,5 @@ Resources:
         ArtifactBucketName: !GetAtt IamRoles.Outputs.ArtifactBucketName
         CodePipelineServiceRoleArn: !GetAtt IamRoles.Outputs.CodePipelineServiceRoleArn
         CodeBuildServiceRoleArn: !GetAtt IamRoles.Outputs.CodeBuildServiceRoleArn
-        CodeCommitRepositoryName: !Ref CodeCommitRepoName
-        CodeCommitBranchName: master      
+#        CodeCommitRepositoryName: !Ref CodeCommitRepoName
+#        CodeCommitBranchName: master      

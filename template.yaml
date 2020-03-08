@@ -5,6 +5,14 @@ Parameters:
     Description: The preferred AvailabilityZone.
     Type: String
     Default: ''
+  StreamJson:
+    Description: Should kinesis messages be JSON formatted
+    Type: String
+    Default: 'true'
+  StreamCompress:
+    Description: Should kinesis messages be compressed
+    Type: String
+    Default: 'false'
 
 Resources:
   VPC:
@@ -72,7 +80,7 @@ Resources:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref PublicRouteTable
 
-  SwimIngestStream: 
+  SwimIngestKinesisStream: 
     Type: AWS::Kinesis::Stream 
     Properties: 
 #      Name: SwimIngestKinesisStream 
@@ -108,7 +116,7 @@ Resources:
               - Action:
                 - 'kinesis:PutRecord'
                 Effect: Allow
-                Resource: !GetAtt SwimIngestStream.Arn
+                Resource: !GetAtt SwimIngestKinesisStream.Arn
 
   SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
@@ -127,11 +135,15 @@ Resources:
             LogDriver: 'awslogs'
             Options:
               awslogs-group: !Sub '/ecs/bkl-test'
-              awslogs-region: 'us-east-1'
+              awslogs-region: !Sub '${AWS::Region}'
               awslogs-stream-prefix: 'ecs'
           Environment:
             - Name: AWS_KINESIS_STREAM
-              Value: !Ref SwimIngestStream
+              Value: !Ref SwimIngestKinesisStream
+            - Name: AWS_KINESIS_STREAM_JSON
+              Value: !Sub StreamJson
+            - Name: AWS_KINESIS_STREAM_COMPRESS
+              Value: !Sub StreamCompress
           Secrets:
             - Name: SWIM_JNDI_CONTEXT_FACTORY
               ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/context_factory'
@@ -166,19 +178,6 @@ Resources:
       Memory: '2GB'
       Cpu: '1 vCPU'
       NetworkMode: 'awsvpc'
-#      Family: String
-#      InferenceAccelerators: 
-#        - InferenceAccelerator
-#      IpcMode: String
-#      PidMode: String
-#      PlacementConstraints: 
-#        - TaskDefinitionPlacementConstraint
-#      ProxyConfiguration: 
-#        ProxyConfiguration
-#      Tags: 
-#        - Tag
-#      Volumes: 
-#        - Volume
 
   FDPSSwimIngestService:
     Type: AWS::ECS::Service
@@ -199,4 +198,10 @@ Resources:
             - !Ref SwimSecurityGroup
             
 
-#Outputs:
+Outputs:
+  KinesisStream:
+    Description: The kinesis stream to be consumed
+    Value: !GetAtt SwimIngestKinesisStream.Arn 
+    Export:
+      Name: !Sub '${AWS::StackName}-KinesisStream'
+

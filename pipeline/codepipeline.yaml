@@ -19,27 +19,43 @@ Parameters:
     Type: String
     Description: Where this pipeline should get source from.
 
-  CodeCommitBranchName:
+  GitHubUsername:
     Type: String
-    Description: Where this pipeline should get source from.
+    Description: Which branch to use.
+    Default: 'brentlemons'
+
+  GitHubRepoName:
+    Type: String
+    Description: Which branch to use.
+    Default: 'aws-swim-ingest-poc'
+
+  GitHubBranchName:
+    Type: String
+    Description: Which branch to use.
+    Default: 'master'
+
+  GitHubToken:
+    Type: String
+    Description: Which branch to use.
+    Default: '35a26592fbd14a8f2c6632e97c5d7b8f9a7a59ed'
 
 Resources:
 
-  CodeBuildSourceCredential:
-    Type: AWS::CodeBuild::SourceCredential
-    Properties:
-      AuthType: PERSONAL_ACCESS_TOKEN
-      ServerType: GITHUB
-      Token: "<YOUR-PERSONAL-GITHUB-ACCESS-TOKEN>"
+#  CodeBuildSourceCredential:
+#    Type: AWS::CodeBuild::SourceCredential
+#    Properties:
+#      AuthType: PERSONAL_ACCESS_TOKEN
+#      ServerType: GITHUB
+#      Token: "<YOUR-PERSONAL-GITHUB-ACCESS-TOKEN>"
 
-  # CodeBuild resource.
-  CodeBuild:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Source:
-        Auth:
-          Resource: !Ref CodeBuildSourceCredential
-          Type: OAUTH
+#  # CodeBuild resource.
+#  CodeBuild:
+#    Type: AWS::CodeBuild::Project
+#    Properties:
+#      Source:
+#        Auth:
+#          Resource: !Ref CodeBuildSourceCredential
+#          Type: OAUTH
 
   BuildStep:
     Type: AWS::CodeBuild::Project
@@ -70,6 +86,7 @@ Resources:
       Stages:
         - Name: Source
           Actions:
+
           - Name: Source
             ActionTypeId:
               Category: Source
@@ -77,12 +94,11 @@ Resources:
               Provider: GitHub
               Version: '1'
             Configuration:
-              Owner: !Ref MyGithubUsername
-              Repo: !Ref MyGithubRepoName
-              Branch: !Ref MyRepoBranchName
-              OAuthToken: '{{resolve:secretsmanager:NameOfSecret:SecretString:KeyOfSecret}}'
-#              RepositoryName: !Ref CodeCommitRepositoryName
-#              BranchName: !Ref CodeCommitBranchName
+              Owner: !Ref GitHubUsername
+              Repo: !Ref GitHubRepoName
+              Branch: !Ref GitHubRepoBranchName
+              OAuthToken: !Ref GitHubToken
+#              OAuthToken: '{{resolve:secretsmanager:NameOfSecret:SecretString:KeyOfSecret}}'
             InputArtifacts: []
             OutputArtifacts:
             - Name: SourceArtifact

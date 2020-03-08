@@ -3,10 +3,11 @@
  */
 package com.awsproserve.swim.ingest;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.zip.GZIPOutputStream;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -20,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -35,7 +35,6 @@ import aero.faa.nas._3.MessageCollectionType;
 import aero.faa.nas._3.NasFlightType;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
-import software.amazon.awssdk.services.kinesis.model.KinesisResponseMetadata;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 
@@ -54,6 +53,12 @@ public class SCDSMessageConsumer implements MessageListener {
 	@Value("${aws.kinesis.stream}")
 	private String stream;
 
+	@Value("#{new Boolean('${aws.kinesis.stream.json}')}")
+	private Boolean streamJson;
+
+	@Value("#{new Boolean('${aws.kinesis.stream.compress}')}")
+	private Boolean streamCompress;
+
 	private static final Logger logger = LoggerFactory.getLogger(SCDSMessageConsumer.class);
     private ObjectMapper mapper;
     
@@ -62,7 +67,9 @@ public class SCDSMessageConsumer implements MessageListener {
 		this.mapper.registerModule(new JavaTimeModule());
 		this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);	
 		this.mapper.setSerializationInclusion(Include.NON_NULL);
-		this.mapper.setSerializationInclusion(Include.NON_EMPTY);    	
+		this.mapper.setSerializationInclusion(Include.NON_EMPTY); 
+		logger.info("streamJson: " + streamJson);
+		logger.info("streamCompress: " + streamCompress);
     }
 
 	@Override
@@ -78,37 +85,50 @@ public class SCDSMessageConsumer implements MessageListener {
 				
 				TextMessage txtMsg = (TextMessage) message;
 				String msgTextObj = txtMsg.getText();
+				String kinesisRecord = "";
 
-//				logger.info("raw message: " + msgTextObj);
-				try {
-					JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
-					List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
-
-					for (AbstractMessageType msg : messages) {
-						if (msg.getClass() == FlightMessageType.class) {
-							NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
-							if (nasFlight.getSource() != null) {
-								
-								logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
-
-								CompletableFuture<PutRecordResponse> putRecordResponseFuture = kinesisClient.putRecord(
-						                PutRecordRequest.builder()
-						                                .streamName(this.stream)
-						                                .partitionKey(routingKey)
-				//		                                .data(SdkBytes.fromByteArray(compress(this.mapper.writeValueAsBytes(nasFlight))))
-				//		                                .data(SdkBytes.fromUtf8String(msgTextObj.toString()))
-						                                .data(SdkBytes.fromUtf8String(this.mapper.writeValueAsString(nasFlight)))
-						                                .build());
-
+				logger.debug("raw message: " + msgTextObj);
+				
+				if (!streamJson) {
+					kinesisRecord = msgTextObj;
+				} else {
+					try {
+						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
+						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
+	
+						for (AbstractMessageType msg : messages) {
+							if (msg.getClass() == FlightMessageType.class) {
+								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
+								if (nasFlight.getSource() != null) {
+									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
+									kinesisRecord = this.mapper.writeValueAsString(nasFlight);
+								}
+							} else {
+								logger.error("unknown message type: " + msg.getClass().toString());
 							}
 						}
+					} catch (JAXBException e1) {
+						logger.error(e1.toString());
+					} catch (JsonProcessingException e) {
+						logger.error(e.toString());
 					}
-				} catch (JAXBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				}
+				
+				if (kinesisRecord.length() > 0) {
+					SdkBytes kinesisBytes = SdkBytes.fromUtf8String(kinesisRecord);
+					if (streamCompress) {
+						try {
+							kinesisBytes = SdkBytes.fromByteArray(compress(kinesisRecord));
+						} catch(IOException ioex) {
+							logger.error(ioex.toString());
+						}	
+					}
+					CompletableFuture<PutRecordResponse> putRecordResponseFuture = kinesisClient.putRecord(
+			                PutRecordRequest.builder()
+			                                .streamName(this.stream)
+			                                .partitionKey(routingKey)
+			                                .data(kinesisBytes)
+			                                .build());
 				}
 			}
 
@@ -128,5 +148,16 @@ public class SCDSMessageConsumer implements MessageListener {
     public Object xmlToObject(String xml) throws JAXBException {
     	return unmarshallXml(new StreamSource(new java.io.StringReader(xml)));
     }
+    
+	public static byte[] compress(String data) throws IOException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+		GZIPOutputStream gzip = new GZIPOutputStream(bos);
+		gzip.write(data.getBytes("UTF-8"));
+		gzip.close();
+		byte[] compressed = bos.toByteArray();
+		bos.close();
+		return compressed;
+	}
+
 
 }

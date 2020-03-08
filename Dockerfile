@@ -3,6 +3,8 @@ COPY build/libs/aws-swim-ingest-poc-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT [ "java", \
 	"-jar","/app.jar", \
 	"--aws.kinesis.stream=${AWS_KINESIS_STREAM}", \
+	"--aws.kinesis.stream.json=${AWS_KINESIS_STREAM_JSON}", \
+	"--aws.kinesis.stream.compress=${AWS_KINESIS_STREAM_COMPRESS}", \
 	"--swim.jndi.context_factory=${SWIM_JNDI_CONTEXT_FACTORY}", \
     "--swim.jndi.host=${SWIM_JNDI_HOST}", \
     "--swim.jndi.principal=${SWIM_JNDI_PRINCIPAL}", \

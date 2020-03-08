@@ -125,7 +125,7 @@ Resources:
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
           Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/swim-testing'
           Essential: 'true'
-          Memory: '300'
+#          Memory: '300'
           LogConfiguration:
             LogDriver: 'awslogs'
             Options:
@@ -170,7 +170,7 @@ Resources:
 #              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
       TaskRoleArn: !Ref SwimIngestECSServiceRole
       ExecutionRoleArn: !Ref SwimIngestECSServiceRole
-      Memory: '2GB'
+      Memory: '3GB'
       Cpu: '1 vCPU'
       NetworkMode: 'awsvpc'
 

@@ -1,10 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS CloudFormation template to create a new ECS Fargate First Run stack
 Parameters:
-  AvailabilityZone:
-    Description: The preferred AvailabilityZone.
-    Type: String
-    Default: ''
   StreamJson:
     Description: Should kinesis messages be JSON formatted
     Type: String
@@ -83,7 +79,6 @@ Resources:
   SwimIngestKinesisStream: 
     Type: AWS::Kinesis::Stream 
     Properties: 
-#      Name: SwimIngestKinesisStream 
       RetentionPeriodHours: 24 
       ShardCount: 3 
 

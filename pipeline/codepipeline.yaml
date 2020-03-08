@@ -15,10 +15,6 @@ Parameters:
     Type: String
     Description: Arn referencing service-role CodeBuild will use.
 
-  CodeCommitRepositoryName:
-    Type: String
-    Description: Where this pipeline should get source from.
-
   GitHubUsername:
     Type: String
     Description: Which branch to use.
@@ -37,25 +33,8 @@ Parameters:
   GitHubToken:
     Type: String
     Description: Which branch to use.
-    Default: '35a26592fbd14a8f2c6632e97c5d7b8f9a7a59ed'
 
 Resources:
-
-#  CodeBuildSourceCredential:
-#    Type: AWS::CodeBuild::SourceCredential
-#    Properties:
-#      AuthType: PERSONAL_ACCESS_TOKEN
-#      ServerType: GITHUB
-#      Token: "<YOUR-PERSONAL-GITHUB-ACCESS-TOKEN>"
-
-#  # CodeBuild resource.
-#  CodeBuild:
-#    Type: AWS::CodeBuild::Project
-#    Properties:
-#      Source:
-#        Auth:
-#          Resource: !Ref CodeBuildSourceCredential
-#          Type: OAUTH
 
   BuildStep:
     Type: AWS::CodeBuild::Project
@@ -77,7 +56,7 @@ Resources:
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Ref CodeCommitRepositoryName
+      Name: !Ref GitHubRepoName
       ArtifactStore:
         Type: S3
         Location: !Ref ArtifactBucketName
@@ -96,7 +75,7 @@ Resources:
             Configuration:
               Owner: !Ref GitHubUsername
               Repo: !Ref GitHubRepoName
-              Branch: !Ref GitHubRepoBranchName
+              Branch: !Ref GitHubBranchName
               OAuthToken: !Ref GitHubToken
 #              OAuthToken: '{{resolve:secretsmanager:NameOfSecret:SecretString:KeyOfSecret}}'
             InputArtifacts: []
@@ -131,6 +110,6 @@ Resources:
             Configuration:
                 ActionMode: CREATE_UPDATE
                 RoleArn: !Ref CodePipelineServiceRoleArn
-                StackName: !Ref CodeCommitRepositoryName
+                StackName: !Ref GitHubRepoName
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: BuildArtifact::outputtemplate.yaml

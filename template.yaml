@@ -9,6 +9,9 @@ Parameters:
     Description: Should kinesis messages be compressed
     Type: String
     Default: 'false'
+  ECRRepositoryName:
+    Description: Where this pipeline should store built artifacts
+    Type: String
 
 Resources:
   VPC:
@@ -131,7 +134,7 @@ Resources:
         - 'FARGATE'
       ContainerDefinitions: 
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
-          Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/swim-testing'
+          Image: !Sub ECRRepositoryName
           Essential: 'true'
 #          Memory: '300'
           LogConfiguration:

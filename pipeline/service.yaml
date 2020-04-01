@@ -34,11 +34,6 @@ Resources:
 
   ECRRepository:
     Type: AWS::ECR::Repository
-#    Properties: 
-#      LifecyclePolicy: 
-#        LifecyclePolicy
-##      RepositoryName: String
-#      RepositoryPolicyText: Json
 
   CodePipeline:
     Type: AWS::CloudFormation::Stack

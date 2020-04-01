@@ -25,6 +25,8 @@ Resources:
       Parameters:
         ArtifactBucketName:
           Ref: ArtifactBucket
+  ECRRepository:
+    Type: AWS::ECR::Repository
   CodePipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -55,3 +57,9 @@ Outputs:
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-ArtifactBucketName
+  ECRRepositoryName:
+    Value:
+      Ref: ECRRepository
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-ECRRepositoryName

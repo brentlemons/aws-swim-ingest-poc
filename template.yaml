@@ -113,6 +113,14 @@ Resources:
                 Effect: Allow
                 Resource: !GetAtt SwimIngestKinesisStream.Arn
 
+#  SwimIngestECRRepository:
+#    Type: AWS::ECR::Repository
+#    Properties: 
+#      LifecyclePolicy: 
+#        LifecyclePolicy
+##      RepositoryName: String
+#      RepositoryPolicyText: Json
+    
   SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
     

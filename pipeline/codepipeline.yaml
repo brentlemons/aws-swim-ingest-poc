@@ -76,7 +76,6 @@ Resources:
               Repo: !Ref GitHubRepoName
               Branch: !Ref GitHubBranchName
               OAuthToken: !Ref GitHubToken
-#              OAuthToken: '{{resolve:secretsmanager:NameOfSecret:SecretString:KeyOfSecret}}'
             InputArtifacts: []
             OutputArtifacts:
             - Name: SourceArtifact

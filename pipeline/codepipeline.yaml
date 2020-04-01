@@ -121,7 +121,4 @@ Resources:
                 StackName: !Ref GitHubRepoName
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: BuildArtifact::outputtemplate.yaml
-                ParameterOverrides: |
-                  {
-                    "ECRRepositoryName": !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}'
-                  }
+                ParameterOverrides: !Sub '{"ECRRepositoryName": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}"}'

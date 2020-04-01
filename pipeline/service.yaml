@@ -46,6 +46,7 @@ Resources:
       TemplateURL: codepipeline.yaml
       Parameters:
         ArtifactBucketName: !Ref ArtifactBucket
+        ECRRepositoryName: !Ref ECRRepository
         CodePipelineServiceRoleArn: !GetAtt IamRoles.Outputs.CodePipelineServiceRoleArn
         CodeBuildServiceRoleArn: !GetAtt IamRoles.Outputs.CodeBuildServiceRoleArn
         GitHubUsername: !Ref GitHubUsername

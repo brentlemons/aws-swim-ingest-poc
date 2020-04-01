@@ -7,6 +7,10 @@ Parameters:
     Type: String
     Description: Where this pipeline should store artifacts.
 
+  ECRRepositoryName:
+    Type: String
+    Description: Where this pipeline should store built artifacts.
+
   CodePipelineServiceRoleArn:
     Type: String
     Description: Arn referencing service-role CodePipeline will use.
@@ -48,6 +52,11 @@ Resources:
         Type: LINUX_CONTAINER
         Image: "aws/codebuild/java:openjdk-8"
         ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - Name: ECR_REPO_NAME
+            Value: !Ref ECRRepositoryName
+          - Name: ECR_REPO_IMAGE_URL
+            Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}'
       ServiceRole: !Ref CodeBuildServiceRoleArn
       Source:
         Type: CODEPIPELINE

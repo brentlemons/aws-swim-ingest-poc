@@ -16,7 +16,8 @@ phases:
       - echo CODEBUILD_BUILD_ID = $CODEBUILD_BUILD_ID
       - echo CODEBUILD_BUILD_NUMBER = $CODEBUILD_BUILD_NUMBER
       - echo CODEBUILD_INITIATOR = $CODEBUILD_INITIATOR
-      - echo CODEBUILD_SOURCE_REPO_URL = $CODEBUILD_SOURCE_REPO_URL
+      - echo ECR_REPO_NAME = $ECR_REPO_NAME
+      - echo ECR_REPO_IMAGE_URL = $ECR_REPO_IMAGE_URL
       - echo CODEBUILD_SOURCE_VERSION = $CODEBUILD_SOURCE_VERSION
 #      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
 #      - REPOSITORY_URI=012345678910.dkr.ecr.us-east-1.amazonaws.com/base-image

@@ -134,7 +134,7 @@ Resources:
         - 'FARGATE'
       ContainerDefinitions: 
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
-          Image: !Ref ECRRepositoryName
+          Image: !Sub '${ECRRepositoryName}'
           Essential: 'true'
 #          Memory: '300'
           LogConfiguration:

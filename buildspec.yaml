@@ -31,6 +31,7 @@ phases:
       - ./gradlew build
       - docker build -t $ECR_REPO_NAME:latest .
       - docker tag $ECR_REPO_NAME:latest $ECR_REPO_IMAGE_URL:latest
+      - docker push $ECR_REPO_IMAGE_URL:latest
   post_build:
     commands:
       - aws cloudformation package --output-template-file outputtemplate.yaml --template-file template.yaml --s3-bucket bkl-test-starter

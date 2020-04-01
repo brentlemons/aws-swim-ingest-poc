@@ -52,6 +52,7 @@ Resources:
         Type: LINUX_CONTAINER
         Image: "aws/codebuild/java:openjdk-8"
         ComputeType: BUILD_GENERAL1_SMALL
+        PrivilegedMode: true
         EnvironmentVariables:
           - Name: ECR_REPO_NAME
             Value: !Ref ECRRepositoryName

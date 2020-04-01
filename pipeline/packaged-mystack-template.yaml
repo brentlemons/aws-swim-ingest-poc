@@ -21,7 +21,7 @@ Resources:
   IamRoles:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/68ef40fdb9410df89b01b068294b9341.template
+      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/72de8b08ac623d71e82a136110512c54.template
       Parameters:
         ArtifactBucketName:
           Ref: ArtifactBucket

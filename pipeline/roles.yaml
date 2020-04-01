@@ -26,6 +26,11 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Action:
+              #clean these up to be exactly what's needed
+                  - ecr:*
+                Resource: '*'
+                Effect: Allow
+              - Action:
                 - 'logs:CreateLogGroup'
                 - 'logs:CreateLogStream'
                 - 'logs:PutLogEvents'

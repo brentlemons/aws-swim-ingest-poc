@@ -30,7 +30,7 @@ Resources:
   CodePipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/e8019ac118e98ac5f5075a8a3be22c0c.template
+      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/334c63676fa9163950448fcba5c04c66.template
       Parameters:
         ArtifactBucketName:
           Ref: ArtifactBucket

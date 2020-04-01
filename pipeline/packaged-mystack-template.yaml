@@ -30,10 +30,12 @@ Resources:
   CodePipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/6257395f15be6450a92567f33d82c33a.template
+      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/e8019ac118e98ac5f5075a8a3be22c0c.template
       Parameters:
         ArtifactBucketName:
           Ref: ArtifactBucket
+        ECRRepositoryName:
+          Ref: ECRRepository
         CodePipelineServiceRoleArn:
           Fn::GetAtt:
           - IamRoles

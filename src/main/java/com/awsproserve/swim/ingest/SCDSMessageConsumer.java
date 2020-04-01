@@ -87,7 +87,7 @@ public class SCDSMessageConsumer implements MessageListener {
 				String msgTextObj = txtMsg.getText();
 				String kinesisRecord = "";
 
-				logger.debug("raw message: " + msgTextObj);
+				logger.info("raw message: " + msgTextObj);
 				
 				if (!streamJson) {
 					kinesisRecord = msgTextObj;

@@ -69,9 +69,11 @@ Resources:
               Resource: !Sub 'arn:aws:s3:::${ArtifactBucketName}/*'
               Effect: Allow
             - Action:
+            #clean these up to be exactly what's needed
                 - dynamodb:*
                 - iam:*
                 - ecs:*
+                - ecr:*
                 - ec2:*
               Resource: '*'
               Effect: Allow

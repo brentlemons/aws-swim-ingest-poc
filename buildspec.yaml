@@ -10,16 +10,17 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=012345678910.dkr.ecr.us-east-1.amazonaws.com/base-image
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo $COMMIT_HASH
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - echo $IMAGE_TAG
   build:
     commands:
       - chmod +x gradlew
       - ./gradlew build
       - docker build -t $ECR_REPO_IMAGE_URL:latest .
       - docker tag $ECR_REPO_IMAGE_URL:latest $ECR_REPO_IMAGE_URL:$IMAGE_TAG
-      - docker push $ECR_REPO_IMAGE_URL:latest
   post_build:
     commands:
       - docker push $ECR_REPO_IMAGE_URL:latest
@@ -30,3 +31,4 @@ artifacts:
   files:
     - outputtemplate.yaml
   discard-paths: yes
+  

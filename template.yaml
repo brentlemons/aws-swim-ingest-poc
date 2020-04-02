@@ -192,7 +192,7 @@ Resources:
       LaunchType: 'FARGATE'
       TaskDefinition: !Ref FDPSSwimIngestTaskDefinition
       ServiceName: !Sub 'fdps-swim-ingest-service'
-      DesiredCount: 1
+      DesiredCount: 0
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 50

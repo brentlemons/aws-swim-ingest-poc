@@ -181,7 +181,7 @@ Resources:
 #              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
       TaskRoleArn: !Ref SwimIngestECSServiceRole
       ExecutionRoleArn: !Ref SwimIngestECSServiceRole
-      Memory: '3GB'
+      Memory: '8 GB'
       Cpu: '1 vCPU'
       NetworkMode: 'awsvpc'
 

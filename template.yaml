@@ -193,6 +193,9 @@ Resources:
       TaskDefinition: !Ref FDPSSwimIngestTaskDefinition
       ServiceName: !Sub 'fdps-swim-ingest-service'
       DesiredCount: 1
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
       DeploymentController: 
         Type: 'ECS'
       NetworkConfiguration: 

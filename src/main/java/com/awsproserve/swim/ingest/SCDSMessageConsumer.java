@@ -74,7 +74,7 @@ public class SCDSMessageConsumer implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
-		logger.info("Received message");
+		logger.debug("Received message");
 		
 		try {
 			logger.debug("Process message");
@@ -87,7 +87,7 @@ public class SCDSMessageConsumer implements MessageListener {
 				String msgTextObj = txtMsg.getText();
 				String kinesisRecord = "";
 
-				logger.info("raw message: " + msgTextObj);
+				logger.debug("raw message: " + msgTextObj);
 				
 				if (!streamJson) {
 					kinesisRecord = msgTextObj;

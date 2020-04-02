@@ -74,7 +74,7 @@ public class SCDSMessageConsumer implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
-		logger.info("Received message");
+		logger.debug("Received message");
 		
 		try {
 			logger.debug("Process message");

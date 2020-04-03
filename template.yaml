@@ -116,14 +116,6 @@ Resources:
                 Effect: Allow
                 Resource: !GetAtt SwimIngestKinesisStream.Arn
 
-#  SwimIngestECRRepository:
-#    Type: AWS::ECR::Repository
-#    Properties: 
-#      LifecyclePolicy: 
-#        LifecyclePolicy
-##      RepositoryName: String
-#      RepositoryPolicyText: Json
-    
   SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
     
@@ -136,7 +128,6 @@ Resources:
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
           Image: !Sub '${ECRRepositoryName}'
           Essential: 'true'
-#          Memory: '300'
           LogConfiguration:
             LogDriver: 'awslogs'
             Options:
@@ -183,6 +174,7 @@ Resources:
       ExecutionRoleArn: !Ref SwimIngestECSServiceRole
       Memory: '6 GB'
       Cpu: '1 vCPU'
+      Family: !Sub '${AWS:StackName}-Family'
       NetworkMode: 'awsvpc'
 
   FDPSSwimIngestService:

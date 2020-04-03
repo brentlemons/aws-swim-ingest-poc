@@ -174,7 +174,7 @@ Resources:
       ExecutionRoleArn: !Ref SwimIngestECSServiceRole
       Memory: '6 GB'
       Cpu: '1 vCPU'
-      Family: !Sub '${AWS:StackName}-Family'
+      Family: !Sub '${AWS::StackName}-Family'
       NetworkMode: 'awsvpc'
 
   FDPSSwimIngestService:

@@ -9,7 +9,10 @@ Parameters:
     Description: Should kinesis messages be compressed
     Type: String
     Default: 'true'
-  ECRRepositoryName:
+  ECRRepositoryUri:
+    Description: Where this pipeline should store built artifacts
+    Type: String
+  ECRImageTag:
     Description: Where this pipeline should store built artifacts
     Type: String
 
@@ -126,7 +129,7 @@ Resources:
         - 'FARGATE'
       ContainerDefinitions: 
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
-          Image: !Sub '${ECRRepositoryName}:#{SourceVariables.CommitId}'
+          Image: !Sub '${ECRRepositoryUri}:${ECRImageTag}'
           Essential: 'true'
           LogConfiguration:
             LogDriver: 'awslogs'

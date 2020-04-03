@@ -126,7 +126,7 @@ Resources:
         - 'FARGATE'
       ContainerDefinitions: 
         - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container']]
-          Image: !Sub '${ECRRepositoryName}'
+          Image: !Sub '${ECRRepositoryName}:#{SourceVariables.CommitId}'
           Essential: 'true'
           LogConfiguration:
             LogDriver: 'awslogs'

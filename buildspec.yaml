@@ -25,7 +25,7 @@ phases:
     commands:
       - docker push $ECR_REPO_IMAGE_URL:latest
       - docker push $ECR_REPO_IMAGE_URL:$IMAGE_TAG
-      - aws cloudformation package --output-template-file outputtemplate.yaml --template-file template.yaml --s3-bucket bkl-test-starter
+      - aws cloudformation package --force --output-template-file outputtemplate.yaml --template-file template.yaml --s3-bucket bkl-test-starter
 
 artifacts:
   files:

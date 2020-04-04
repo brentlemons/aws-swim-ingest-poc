@@ -86,6 +86,7 @@ Resources:
               Repo: !Ref GitHubRepoName
               Branch: !Ref GitHubBranchName
               OAuthToken: !Ref GitHubToken
+            Namespace: 'SourceVariables'
             InputArtifacts: []
             OutputArtifacts:
             - Name: SourceArtifact
@@ -100,6 +101,7 @@ Resources:
               Version: '1'
             Configuration:
               ProjectName: !Ref BuildStep
+            Namespace: 'BuildVariables'
             InputArtifacts:
               - Name: SourceArtifact
             OutputArtifacts:
@@ -121,5 +123,4 @@ Resources:
                 StackName: !Ref GitHubRepoName
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: BuildArtifact::outputtemplate.yaml
-                ParameterOverrides: !Sub '{"ECRRepositoryUri": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}";
-                  "ECRImageTag": "#{BuildVariables.IMAGE_TAG}"}'
+                ParameterOverrides: !Sub '{"ECRRepositoryUri": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}","ECRImageTag":"#{BuildVariables.IMAGE_TAG}"}'

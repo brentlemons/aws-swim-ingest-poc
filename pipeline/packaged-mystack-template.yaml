@@ -34,8 +34,8 @@ Resources:
       Parameters:
         ArtifactBucketName:
           Ref: ArtifactBucket
-        ECRRepositoryName:
-          Ref: ECRRepository
+        ECRRepositoryUri:
+          Fn::Sub: ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}
         CodePipelineServiceRoleArn:
           Fn::GetAtt:
           - IamRoles

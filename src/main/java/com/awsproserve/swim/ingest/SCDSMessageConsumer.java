@@ -116,14 +116,14 @@ public class SCDSMessageConsumer implements MessageListener {
 				
 				if (kinesisRecord.length() > 0) {
 					SdkBytes kinesisBytes = SdkBytes.fromUtf8String(kinesisRecord);
-					if (streamCompress) {
-						logger.info("compressing");
+//					if (streamCompress) {
+//						logger.info("compressing");
 						try {
 							kinesisBytes = SdkBytes.fromByteArray(compress(kinesisRecord));
 						} catch(IOException ioex) {
 							logger.error(ioex.toString());
 						}	
-					}
+//					}
 					CompletableFuture<PutRecordResponse> putRecordResponseFuture = kinesisClient.putRecord(
 			                PutRecordRequest.builder()
 			                                .streamName(this.stream)

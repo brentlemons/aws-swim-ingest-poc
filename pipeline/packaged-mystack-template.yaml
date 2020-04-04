@@ -30,7 +30,7 @@ Resources:
   CodePipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/9394c449ed762bfba1a363e4a259c62a.template
+      TemplateURL: https://s3.amazonaws.com/bkl-swim-codepipeline/cbf275bf2d758881b48edbb6b621e953.template
       Parameters:
         ArtifactBucketName:
           Ref: ArtifactBucket
@@ -59,9 +59,9 @@ Outputs:
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-ArtifactBucketName
-  ECRRepositoryName:
+  ECRRepositoryUri:
     Value:
-      Ref: ECRRepository
+      Fn::Sub: ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-ECRRepositoryName

@@ -56,8 +56,8 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-ArtifactBucketName
 
-  ECRRepositoryName:
-    Value: !Ref ECRRepository
+  ECRRepositoryUri:
+    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}' 
     Export:
       Name: !Sub ${AWS::StackName}-ECRRepositoryName
      

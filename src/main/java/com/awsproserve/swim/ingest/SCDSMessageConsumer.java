@@ -68,8 +68,8 @@ public class SCDSMessageConsumer implements MessageListener {
 		this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);	
 		this.mapper.setSerializationInclusion(Include.NON_NULL);
 		this.mapper.setSerializationInclusion(Include.NON_EMPTY); 
-		logger.debug("streamJson: " + streamJson);
-		logger.debug("streamCompress: " + streamCompress);
+		logger.info("streamJson: " + streamJson);
+		logger.info("streamCompress: " + streamCompress);
     }
 
 	@Override

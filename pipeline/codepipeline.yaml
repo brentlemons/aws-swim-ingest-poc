@@ -47,7 +47,7 @@ Resources:
         Type: CODEPIPELINE
         Name: !Sub "${AWS::StackName}-build"
       Description: Builds the output artifacts
-      TimeoutInMinutes: 5
+      TimeoutInMinutes: 10
       Environment:
         Type: LINUX_CONTAINER
         Image: "aws/codebuild/java:openjdk-8"
@@ -56,7 +56,7 @@ Resources:
         EnvironmentVariables:
           - Name: ECR_REPO_NAME
             Value: !Ref ECRRepositoryName
-          - Name: ECR_REPO_IMAGE_URL
+          - Name: ECR_REPO_IMAGE_URI
             Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}'
       ServiceRole: !Ref CodeBuildServiceRoleArn
       Source:
@@ -74,8 +74,7 @@ Resources:
       Stages:
         - Name: Source
           Actions:
-
-          - Name: Source
+            Name: Source
             ActionTypeId:
               Category: Source
               Owner: ThirdParty
@@ -89,11 +88,11 @@ Resources:
             Namespace: 'SourceVariables'
             InputArtifacts: []
             OutputArtifacts:
-            - Name: SourceArtifact
+              - Name: SourceArtifact
 
         - Name: Build
           Actions:
-          - Name: Build
+            Name: Build
             ActionTypeId:
               Category: Build
               Owner: AWS
@@ -109,7 +108,7 @@ Resources:
 
         - Name: Deploy
           Actions:
-          - Name: Deploy
+            Name: Deploy
             ActionTypeId:
               Category: Deploy
               Owner: AWS

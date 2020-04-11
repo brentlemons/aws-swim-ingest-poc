@@ -17,12 +17,13 @@ public class JAXBConfig {
 	@Bean
 	public Jaxb2Marshaller marshaller() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-////		marshaller.setContextPath("net.opengis.wfs._2");
+//		marshaller.setContextPath("aero.aixm.schema._5");
 //		marshaller.setClassesToBeBound(
-//				net.opengis.wfs.v_2_0.GetFeatureType.class,
+////				net.opengis.wfs.v_2_0.GetFeatureType.class,
 ////				aero.aixm.extensions.faa.fnse.ObjectFactory.class,
-//				aero.aixm.ObjectFactory.class);
-		marshaller.setPackagesToScan("aero.*", "net.*", "org.*");
+//				aero.aixm.schema._5_1.ObjectFactory.class);
+//		marshaller.setPackagesToScan("aero.*", "net.*", "org.*");
+		marshaller.setPackagesToScan("aero.aixm.schema._5.*", "aero.aixm.schema._5_1.message.*");
 		return marshaller;
 	}
 

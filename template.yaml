@@ -115,7 +115,8 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Action:
-                - kinesis:*
+                - 'kinesis:PutRecord'
+                - 'kinesis:PutRecords'
                 Effect: Allow
                 Resource: !GetAtt SwimIngestKinesisStream.Arn
 

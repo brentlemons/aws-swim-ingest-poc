@@ -37,8 +37,9 @@ task genJaxb {
             
             xjc(destdir: sourcesDir) {
                 schema(dir: schemaDir, includes: "**/*.xsd")
-//            	binding(dir: bindingsDir, includes: "**/*.xjb")
+            	binding(dir: bindingsDir, includes: "**/*.xjb")
                 produces(dir: sourcesDir, includes: "**/*.java")
+	            arg(value: "-extension")
             }
 
             javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,

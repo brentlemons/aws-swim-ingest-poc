@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings
+	version="2.1"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:namespace="http://jaxb2-commons.dev.java.net/namespace-prefix"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jaxb2-commons.dev.java.net/namespace-prefix http://java.net/projects/jaxb2-commons/sources/svn/content/namespace-prefix/trunk/src/main/resources/prefix-namespace-schema.xsd">
+	
+	<jaxb:bindings scd="/group::gml:PointGrid/model::sequence/gml:rows">
+		<jaxb:property name="pointGridRows"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:secondDefiningParameter">
+		<jaxb:class name="gmlSecondDefiningParameter"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:topologyStyle">
+		<jaxb:class name="gmlTopologyStyle"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:ParameterValue">
+		<jaxb:class name="gmlParameterValue"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:imageDatum">
+		<jaxb:class name="gmlImageDatum"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:linearCS">
+		<jaxb:class name="gmlLinearCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:cylindricalCS">
+		<jaxb:class name="gmlCylindricalCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:verticalCS">
+		<jaxb:class name="gmlVerticalCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:GraphStyle">
+		<jaxb:class name="gmlGraphStyle"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:sphericalCS">
+		<jaxb:class name="gmlSphericalCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:cartesianCS">
+		<jaxb:class name="gmlCartesianCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:TemporalDatum">
+		<jaxb:class name="gmlTemporalDatum"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:Ellipsoid">
+		<jaxb:class name="gmlEllipsoid"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:AffineCS">
+		<jaxb:class name="gmlAffineCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:TimeCS">
+		<jaxb:class name="gmlTimeCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:PolarCS">
+		<jaxb:class name="gmlPolarCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:ellipsoidalCS">
+		<jaxb:class name="gmlEllipsoidalCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:userDefinedCS">
+		<jaxb:class name="gmlUserDefinedCS"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:labelStyle">
+		<jaxb:class name="gmlLabelStyle"/>
+	</jaxb:bindings>
+	
+	<jaxb:bindings scd="/gml:OperationParameter">
+		<jaxb:class name="gmlOperationParameter"/>
+	</jaxb:bindings>
+		
+
+</jaxb:bindings>
+
+

@@ -22,7 +22,7 @@ public class JAXBConfig {
 //				net.opengis.wfs.v_2_0.GetFeatureType.class,
 ////				aero.aixm.extensions.faa.fnse.ObjectFactory.class,
 //				aero.aixm.ObjectFactory.class);
-		marshaller.setPackagesToScan("aero.*", "net.*", "org");
+		marshaller.setPackagesToScan("aero.*", "net.*", "org.*");
 		return marshaller;
 	}
 

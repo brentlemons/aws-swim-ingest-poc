@@ -88,6 +88,34 @@
 		<jaxb:class name="gmlOperationParameter"/>
 	</jaxb:bindings>
 		
+	<jaxb:bindings scd="/gml:EngineeringDatum">
+		<jaxb:class name="gmlEngineeringDatum"/>
+	</jaxb:bindings>
+		
+	<jaxb:bindings scd="/gml:GeodeticDatum">
+		<jaxb:class name="gmlGeodeticDatum"/>
+	</jaxb:bindings>
+		
+	<jaxb:bindings scd="/gml:PrimeMeridian">
+		<jaxb:class name="gmlPrimeMeridian"/>
+	</jaxb:bindings>
+		
+	<jaxb:bindings scd="/gml:verticalDatum">
+		<jaxb:class name="gmlverticalDatum"/>
+	</jaxb:bindings>
+		
+	<jaxb:bindings scd="/gml:conversion">
+		<jaxb:class name="gmlConversion"/>
+	</jaxb:bindings>
+		
+	<jaxb:bindings scd="/gml:GeometryStyle">
+		<jaxb:class name="gmlGeometryStyle"/>
+	</jaxb:bindings>
+		
+	<jaxb:bindings scd="/gml:featureStyle">
+		<jaxb:class name="gmlFeatureStyle"/>
+	</jaxb:bindings>
+		
 
 </jaxb:bindings>
 

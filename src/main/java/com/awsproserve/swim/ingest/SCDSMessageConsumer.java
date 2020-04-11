@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPOutputStream;
 
 import javax.jms.JMSException;
@@ -137,11 +138,19 @@ public class SCDSMessageConsumer implements MessageListener {
 								.build());
 					}
 
-					CompletableFuture<PutRecordsResponse> putRecordsResponseFuture = kinesisClient.putRecords(
-			                PutRecordsRequest.builder()
-			                                .streamName(this.stream)
-			                                .records(kinesisRecords)
-			                                .build());
+					try {
+						PutRecordsResponse putRecordsResponseFuture = kinesisClient.putRecords(
+						        PutRecordsRequest.builder()
+						                        .streamName(this.stream)
+						                        .records(kinesisRecords)
+						                        .build()).get();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						logger.error(e.toString());
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						logger.error(e.toString());
+					}
 				}
 			}
 

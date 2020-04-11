@@ -134,7 +134,7 @@ Resources:
           LogConfiguration:
             LogDriver: 'awslogs'
             Options:
-              awslogs-group: !Sub '/ecs/bkl-test'
+              awslogs-group: !Sub '/ecs/${AWS::StackName}'
               awslogs-region: !Sub '${AWS::Region}'
               awslogs-stream-prefix: 'ecs'
           Environment:

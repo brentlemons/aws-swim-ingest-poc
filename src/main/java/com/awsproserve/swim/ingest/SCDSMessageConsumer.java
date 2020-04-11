@@ -5,6 +5,7 @@ package com.awsproserve.swim.ingest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPOutputStream;
@@ -37,6 +38,9 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
+import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
+import software.amazon.awssdk.services.kinesis.model.PutRecordsRequestEntry;
+import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 
 /**
  * @author lembrent
@@ -85,13 +89,13 @@ public class SCDSMessageConsumer implements MessageListener {
 				
 				TextMessage txtMsg = (TextMessage) message;
 				String msgTextObj = txtMsg.getText();
-				String kinesisRecord = "";
+				List<String> flightRecords = new ArrayList<String>();
 
 				logger.debug("raw message: " + msgTextObj);
 				
-				if (!streamJson) {
-					kinesisRecord = msgTextObj;
-				} else {
+//				if (!streamJson) {
+//					flightRecords.add(msgTextObj);
+//				} else {
 					try {
 						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
 						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
@@ -101,7 +105,7 @@ public class SCDSMessageConsumer implements MessageListener {
 								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
 								if (nasFlight.getSource() != null) {
 									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
-									kinesisRecord = this.mapper.writeValueAsString(nasFlight);
+									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
 								}
 							} else {
 								logger.error("unknown message type: " + msg.getClass().toString());
@@ -112,23 +116,31 @@ public class SCDSMessageConsumer implements MessageListener {
 					} catch (JsonProcessingException e) {
 						logger.error(e.toString());
 					}
-				}
+//				}
 				
-				if (kinesisRecord.length() > 0) {
-					SdkBytes kinesisBytes = SdkBytes.fromUtf8String(kinesisRecord);
-//					if (streamCompress) {
+				if (flightRecords.size() > 0) {
+					List<PutRecordsRequestEntry> kinesisRecords = new ArrayList<PutRecordsRequestEntry>();
+					
+					for (String flightRecord : flightRecords) {
+						SdkBytes kinesisBytes = SdkBytes.fromUtf8String(flightRecord);
+//						if (streamCompress) {
 //						logger.info("compressing");
-						try {
-							kinesisBytes = SdkBytes.fromByteArray(compress(kinesisRecord));
-						} catch(IOException ioex) {
-							logger.error(ioex.toString());
-						}	
-//					}
-					CompletableFuture<PutRecordResponse> putRecordResponseFuture = kinesisClient.putRecord(
-			                PutRecordRequest.builder()
+							try {
+								kinesisBytes = SdkBytes.fromByteArray(compress(flightRecord));
+							} catch(IOException ioex) {
+								logger.error(ioex.toString());
+							}	
+//						}
+						kinesisRecords.add(PutRecordsRequestEntry.builder()
+								.partitionKey(routingKey)
+								.data(kinesisBytes)
+								.build());
+					}
+
+					CompletableFuture<PutRecordsResponse> putRecordsResponseFuture = kinesisClient.putRecords(
+			                PutRecordsRequest.builder()
 			                                .streamName(this.stream)
-			                                .partitionKey(routingKey)
-			                                .data(kinesisBytes)
+			                                .records(kinesisRecords)
 			                                .build());
 				}
 			}

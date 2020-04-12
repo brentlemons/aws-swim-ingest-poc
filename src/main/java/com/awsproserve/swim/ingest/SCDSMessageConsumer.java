@@ -92,11 +92,11 @@ public class SCDSMessageConsumer implements MessageListener {
 				String msgTextObj = txtMsg.getText();
 				List<String> flightRecords = new ArrayList<String>();
 
-				logger.info("raw message: " + msgTextObj);
+				logger.debug("raw message: " + msgTextObj);
 				
-//				if (!streamJson) {
-//					flightRecords.add(msgTextObj);
-//				} else {
+				if (!streamJson) {
+					flightRecords.add(msgTextObj);
+				} else {
 					try {
 						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
 						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
@@ -117,7 +117,7 @@ public class SCDSMessageConsumer implements MessageListener {
 					} catch (JsonProcessingException e) {
 						logger.error(e.toString());
 					}
-//				}
+				}
 				
 				if (flightRecords.size() > 0) {
 					List<PutRecordsRequestEntry> kinesisRecords = new ArrayList<PutRecordsRequestEntry>();

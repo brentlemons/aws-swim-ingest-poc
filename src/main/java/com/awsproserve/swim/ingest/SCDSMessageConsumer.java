@@ -92,7 +92,7 @@ public class SCDSMessageConsumer implements MessageListener {
 				String msgTextObj = txtMsg.getText();
 				List<String> flightRecords = new ArrayList<String>();
 
-				logger.debug("raw message: " + msgTextObj);
+				logger.info("raw message: " + msgTextObj);
 				
 //				if (!streamJson) {
 //					flightRecords.add(msgTextObj);

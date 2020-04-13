@@ -22,7 +22,8 @@ public class JAXBConfig {
 ////				net.opengis.wfs.v_2_0.GetFeatureType.class,
 ////				aero.aixm.extensions.faa.fnse.ObjectFactory.class,
 //				aero.aixm.schema._5_1.ObjectFactory.class);
-		marshaller.setPackagesToScan("aero.*", "com.awsproserve.swim.ingest.entity.*");
+		marshaller.setPackagesToScan("com.awsproserve.swim.ingest.entity.*");
+//		marshaller.setPackagesToScan("aero.*", "com.awsproserve.swim.ingest.entity.*");
 //		marshaller.setPackagesToScan("aero.*", "net.*", "org.*");
 //		marshaller.setPackagesToScan("aero.aixm.schema._5.*", "aero.aixm.schema._5_1.message.*", "aero.faa.nas._3");
 		return marshaller;

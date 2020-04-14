@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import com.awsproserve.swim.ingest.entity.ASDEXMessage;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,25 +99,46 @@ public class SCDSMessageConsumer implements MessageListener {
 //					flightRecords.add(msgTextObj);
 //				} else {
 					try {
-						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
-						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
-	
-						for (AbstractMessageType msg : messages) {
-							if (msg.getClass() == FlightMessageType.class) {
-								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
-								if (nasFlight.getSource() != null) {
-									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
-									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
-								}
-							} else {
-								logger.error("unknown message type: " + msg.getClass().toString());
-							}
-						}
+						JAXBElement<ASDEXMessage> element = (JAXBElement<ASDEXMessage>) xmlToObject(msgTextObj);
+//						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
+//	
+//						for (AbstractMessageType msg : messages) {
+//							if (msg.getClass() == FlightMessageType.class) {
+//								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
+//								if (nasFlight.getSource() != null) {
+//									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
+//									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
+//								}
+//							} else {
+//								logger.error("unknown message type: " + msg.getClass().toString());
+//							}
+//						}
 					} catch (JAXBException e1) {
+						logger.error("--> " + msgTextObj);
 						logger.error(e1.toString());
-					} catch (JsonProcessingException e) {
-						logger.error(e.toString());
+//					} catch (JsonProcessingException e) {
+//						logger.error(e.toString());
 					}
+//					try {
+//						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
+//						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
+//	
+//						for (AbstractMessageType msg : messages) {
+//							if (msg.getClass() == FlightMessageType.class) {
+//								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
+//								if (nasFlight.getSource() != null) {
+//									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
+//									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
+//								}
+//							} else {
+//								logger.error("unknown message type: " + msg.getClass().toString());
+//							}
+//						}
+//					} catch (JAXBException e1) {
+//						logger.error(e1.toString());
+//					} catch (JsonProcessingException e) {
+//						logger.error(e.toString());
+//					}
 //				}
 				
 				if (flightRecords.size() > 0) {

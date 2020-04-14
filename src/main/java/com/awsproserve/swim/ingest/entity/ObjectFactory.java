@@ -15,7 +15,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 	
-	private final static QName _asdexMsg_QNAME = new QName("urn:us:gov:dot:faa:atm:terminal:entities:v4-0:smes:surfacemovementevent", "ASDEXMessage");
+	private final static QName _asdexMsg_QNAME = new QName("urn:us:gov:dot:faa:atm:terminal:entities:v4-0:smes:surfacemovementevent", "asdexMsg");
 	
 	public ObjectFactory() {
 	}
@@ -24,7 +24,7 @@ public class ObjectFactory {
 		return new ASDEXMessage();
 	}
 
-    @XmlElementDecl(namespace = "urn:us:gov:dot:faa:atm:terminal:entities:v4-0:smes:surfacemovementevent", name = "ASDEXMessage")
+    @XmlElementDecl(namespace = "urn:us:gov:dot:faa:atm:terminal:entities:v4-0:smes:surfacemovementevent", name = "asdexMsg")
     public JAXBElement<ASDEXMessage> createASDEXMessage(ASDEXMessage value) {
         return new JAXBElement<ASDEXMessage>(_asdexMsg_QNAME, ASDEXMessage.class, null, value);
     }

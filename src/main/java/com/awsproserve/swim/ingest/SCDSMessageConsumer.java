@@ -43,6 +43,7 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequestEntry;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
+import us.gov.dot.faa.atm.terminal.entities.v4_0.smes.surfacemovementevent.AsdexMsg;
 
 /**
  * @author lembrent
@@ -99,7 +100,9 @@ public class SCDSMessageConsumer implements MessageListener {
 //					flightRecords.add(msgTextObj);
 //				} else {
 					try {
-						JAXBElement<ASDEXMessage> element = (JAXBElement<ASDEXMessage>) xmlToObject(msgTextObj);
+						JAXBElement<AsdexMsg> element = (JAXBElement<AsdexMsg>) xmlToObject(msgTextObj);
+						logger.info("successful unmarshall!");
+						logger.info(this.mapper.writeValueAsString(element));
 //						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
 //	
 //						for (AbstractMessageType msg : messages) {
@@ -116,8 +119,8 @@ public class SCDSMessageConsumer implements MessageListener {
 					} catch (JAXBException e1) {
 						logger.error("--> " + msgTextObj);
 //						logger.error(e1.toString());
-//					} catch (JsonProcessingException e) {
-//						logger.error(e.toString());
+					} catch (JsonProcessingException e) {
+						logger.error("-=> " + e.toString());
 					} finally {
 						logger.error("==> " + msgTextObj);
 					}

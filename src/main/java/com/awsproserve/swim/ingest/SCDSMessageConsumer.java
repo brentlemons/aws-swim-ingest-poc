@@ -122,7 +122,7 @@ public class SCDSMessageConsumer implements MessageListener {
 					} catch (JsonProcessingException e) {
 						logger.error("-=> " + e.toString());
 					} finally {
-						logger.error("==> " + msgTextObj);
+						logger.debug("==> " + msgTextObj);
 					}
 //					try {
 //						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);

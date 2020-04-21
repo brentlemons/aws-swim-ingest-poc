@@ -101,8 +101,8 @@ public class SCDSMessageConsumer implements MessageListener {
 //				} else {
 					try {
 						Object element = (Object) xmlToObject(msgTextObj);
-						logger.info("successful unmarshall! type: " + element.getClass().toGenericString());
-						logger.info(this.mapper.writeValueAsString(element));
+						logger.debug("successful unmarshall! type: " + element.getClass().toGenericString());
+						logger.debug(this.mapper.writeValueAsString(element));
 //						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
 //	
 //						for (AbstractMessageType msg : messages) {

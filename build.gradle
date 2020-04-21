@@ -32,14 +32,14 @@ task genJaxb {
             mkdir(dir: sourcesDir)
             mkdir(dir: classesDir)
 
-            System.setProperty('javax.xml.accessExternalSchema', 'all')
-            System.setProperty('javax.xml.accessExternalDTD', 'all')
+            //System.setProperty('javax.xml.accessExternalSchema', 'all')
+            //System.setProperty('javax.xml.accessExternalDTD', 'all')
             
             xjc(destdir: sourcesDir) {
                 schema(dir: schemaDir, includes: "**/*.xsd")
-//            	binding(dir: bindingsDir, includes: "**/*.xjb")
                 produces(dir: sourcesDir, includes: "**/*.java")
 	            arg(value: "-extension")
+	            arg(value: "-nv")
             }
 
             javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,

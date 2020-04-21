@@ -100,7 +100,7 @@ public class SCDSMessageConsumer implements MessageListener {
 //					flightRecords.add(msgTextObj);
 //				} else {
 					try {
-						JAXBElement<AsdexMsg> element = (JAXBElement<AsdexMsg>) xmlToObject(msgTextObj);
+						AsdexMsg element = (AsdexMsg) xmlToObject(msgTextObj);
 						logger.info("successful unmarshall!");
 						logger.info(this.mapper.writeValueAsString(element));
 //						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();

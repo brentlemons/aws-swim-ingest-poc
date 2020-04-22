@@ -97,55 +97,55 @@ public class SCDSMessageConsumer implements MessageListener {
 				logger.debug("raw message: " + msgTextObj);
 				
 //				if (!streamJson) {
-					flightRecords.add(msgTextObj);
+//					flightRecords.add(msgTextObj);
 //				} else {
+					try {
+						Object element = (Object) xmlToObject(msgTextObj);
+						logger.debug("successful unmarshall! type: " + element.getClass().toGenericString());
+//						logger.debug(this.mapper.writeValueAsString(element));
+						flightRecords.add(this.mapper.writeValueAsString(new MessageWrapper(element.getClass().getSimpleName(), element)));
+//						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
+//	
+//						for (AbstractMessageType msg : messages) {
+//							if (msg.getClass() == FlightMessageType.class) {
+//								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
+//								if (nasFlight.getSource() != null) {
+//									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
+//									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
+//								}
+//							} else {
+//								logger.error("unknown message type: " + msg.getClass().toString());
+//							}
+//						}
+					} catch (JAXBException e1) {
+						logger.error("--> " + msgTextObj);
+//						logger.error(e1.toString());
+					} catch (JsonProcessingException e) {
+						logger.error("-=> " + e.toString());
+					} finally {
+						logger.debug("==> " + msgTextObj);
+					}
 //					try {
-//						Object element = (Object) xmlToObject(msgTextObj);
-//						logger.debug("successful unmarshall! type: " + element.getClass().toGenericString());
-////						logger.debug(this.mapper.writeValueAsString(element));
-//						flightRecords.add(this.mapper.writeValueAsString(new MessageWrapper(element)));
-////						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
-////	
-////						for (AbstractMessageType msg : messages) {
-////							if (msg.getClass() == FlightMessageType.class) {
-////								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
-////								if (nasFlight.getSource() != null) {
-////									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
-////									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
-////								}
-////							} else {
-////								logger.error("unknown message type: " + msg.getClass().toString());
-////							}
-////						}
+//						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
+//						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
+//	
+//						for (AbstractMessageType msg : messages) {
+//							if (msg.getClass() == FlightMessageType.class) {
+//								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
+//								if (nasFlight.getSource() != null) {
+//									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
+//									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
+//								}
+//							} else {
+//								logger.error("unknown message type: " + msg.getClass().toString());
+//							}
+//						}
 //					} catch (JAXBException e1) {
-//						logger.error("--> " + msgTextObj);
-////						logger.error(e1.toString());
+//						logger.error(e1.toString());
 //					} catch (JsonProcessingException e) {
-//						logger.error("-=> " + e.toString());
-//					} finally {
-//						logger.debug("==> " + msgTextObj);
+//						logger.error(e.toString());
 //					}
-////					try {
-////						JAXBElement<MessageCollectionType> element = (JAXBElement<MessageCollectionType>) xmlToObject(msgTextObj);
-////						List<AbstractMessageType> messages = ((MessageCollectionType)element.getValue()).getMessage();
-////	
-////						for (AbstractMessageType msg : messages) {
-////							if (msg.getClass() == FlightMessageType.class) {
-////								NasFlightType nasFlight = (NasFlightType) ((FlightMessageType)msg).getFlight();
-////								if (nasFlight.getSource() != null) {
-////									logger.debug("json message: " + this.mapper.writeValueAsString(nasFlight));
-////									flightRecords.add(this.mapper.writeValueAsString(nasFlight));
-////								}
-////							} else {
-////								logger.error("unknown message type: " + msg.getClass().toString());
-////							}
-////						}
-////					} catch (JAXBException e1) {
-////						logger.error(e1.toString());
-////					} catch (JsonProcessingException e) {
-////						logger.error(e.toString());
-////					}
-////				}
+//				}
 				
 				if (flightRecords.size() > 0) {
 					List<PutRecordsRequestEntry> kinesisRecords = new ArrayList<PutRecordsRequestEntry>();
@@ -213,10 +213,10 @@ public class SCDSMessageConsumer implements MessageListener {
 	private class MessageWrapper {
 		private String type;
 		private Object message;
-		public MessageWrapper(Object message) {
-			this.type = message.getClass().getSimpleName();
-			this.message = message;
-		}
+//		public MessageWrapper(Object message) {
+//			this.type = message.getClass().getSimpleName();
+//			this.message = message;
+//		}
 		public MessageWrapper(String type, Object message) {
 			this.type = type;
 			this.message = message;

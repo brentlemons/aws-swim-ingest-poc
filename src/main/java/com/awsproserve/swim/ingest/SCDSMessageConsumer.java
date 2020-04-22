@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -210,6 +212,7 @@ public class SCDSMessageConsumer implements MessageListener {
 	}
 	
 	@Data
+	@JsonAutoDetect(fieldVisibility = Visibility.ANY)
 	private class MessageWrapper {
 		private String type;
 		private Object message;

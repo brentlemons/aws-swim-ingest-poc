@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import com.awsproserve.swim.ingest.entity.ASDEXMessage;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,7 +101,8 @@ public class SCDSMessageConsumer implements MessageListener {
 					try {
 						Object element = (Object) xmlToObject(msgTextObj);
 						logger.debug("successful unmarshall! type: " + element.getClass().toGenericString());
-						logger.debug(this.mapper.writeValueAsString(element));
+//						logger.debug(this.mapper.writeValueAsString(element));
+						flightRecords.add(this.mapper.writeValueAsString(element));
 //						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
 //	
 //						for (AbstractMessageType msg : messages) {

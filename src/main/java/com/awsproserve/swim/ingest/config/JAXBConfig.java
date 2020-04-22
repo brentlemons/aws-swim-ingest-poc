@@ -17,7 +17,7 @@ public class JAXBConfig {
 	@Bean
 	public Jaxb2Marshaller marshaller() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-		marshaller.setPackagesToScan("aero.*", "us.*", "net.*, org.*");
+		marshaller.setPackagesToScan("aero.*", "us.*");
 		return marshaller;
 	}
 

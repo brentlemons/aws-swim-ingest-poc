@@ -211,7 +211,7 @@ Resources:
       Family: !Sub '${AWS::StackName}'
       NetworkMode: 'awsvpc'
 
-  SwimIngestService:
+  SwimIngestServiceSTDDS:
     Type: AWS::ECS::Service
     Properties: 
       Cluster: !Ref SwimIngestECSCluster
@@ -232,7 +232,7 @@ Resources:
           SecurityGroups: 
             - !Ref SwimSecurityGroup
             
-  SwimIngestService:
+  SwimIngestServiceFDPS:
     Type: AWS::ECS::Service
     Properties: 
       Cluster: !Ref SwimIngestECSCluster

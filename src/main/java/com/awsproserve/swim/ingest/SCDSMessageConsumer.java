@@ -35,6 +35,7 @@ import aero.faa.nas._3.AbstractMessageType;
 import aero.faa.nas._3.FlightMessageType;
 import aero.faa.nas._3.MessageCollectionType;
 import aero.faa.nas._3.NasFlightType;
+import lombok.Data;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
@@ -102,7 +103,7 @@ public class SCDSMessageConsumer implements MessageListener {
 						Object element = (Object) xmlToObject(msgTextObj);
 						logger.debug("successful unmarshall! type: " + element.getClass().toGenericString());
 //						logger.debug(this.mapper.writeValueAsString(element));
-						flightRecords.add(this.mapper.writeValueAsString(element));
+						flightRecords.add(this.mapper.writeValueAsString(new MessageWrapper(element)));
 //						List<AbstractMessageType> messages = ((ASDEXMessage)element.getValue()).getMessage();
 //	
 //						for (AbstractMessageType msg : messages) {
@@ -206,6 +207,20 @@ public class SCDSMessageConsumer implements MessageListener {
 		byte[] compressed = bos.toByteArray();
 		bos.close();
 		return compressed;
+	}
+	
+	@Data
+	private class MessageWrapper {
+		private String type;
+		private Object message;
+		public MessageWrapper(Object message) {
+			this.type = message.getClass().getSimpleName();
+			this.message = message;
+		}
+		public MessageWrapper(String type, Object message) {
+			this.type = type;
+			this.message = message;
+		}
 	}
 
 

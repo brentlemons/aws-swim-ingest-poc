@@ -82,13 +82,19 @@ Resources:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref PublicRouteTable
 
-  SwimIngestKinesisStream: 
+  SwimIngestKinesisStreamSTDDS: 
     Type: AWS::Kinesis::Stream 
     Properties: 
-      RetentionPeriodHours: 24 
-      ShardCount: 3 
+      RetentionPeriodHours: 12 
+      ShardCount: 2
 
-  SwimIngestECSServiceRole:
+  SwimIngestKinesisStreamFDPS: 
+    Type: AWS::Kinesis::Stream 
+    Properties: 
+      RetentionPeriodHours: 12 
+      ShardCount: 2
+
+  SwimIngestECSServiceRoleSTDDS:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
@@ -109,7 +115,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'
@@ -118,7 +124,39 @@ Resources:
                 - 'kinesis:PutRecord'
                 - 'kinesis:PutRecords'
                 Effect: Allow
-                Resource: !GetAtt SwimIngestKinesisStream.Arn
+                Resource: !GetAtt SwimIngestKinesisStreamSTDDS.Arn
+
+  SwimIngestECSServiceRoleFDPS:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: ECSAccessParameters
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'ssm:GetParameters'
+                Effect: Allow
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps*'
+        - PolicyName: ECSWriteKinesis
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'kinesis:PutRecord'
+                - 'kinesis:PutRecords'
+                Effect: Allow
+                Resource: !GetAtt SwimIngestKinesisStreamFDPS.Arn
 
   SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
@@ -140,7 +178,7 @@ Resources:
               awslogs-stream-prefix: 'ecs'
           Environment:
             - Name: AWS_KINESIS_STREAM
-              Value: !Ref SwimIngestKinesisStream
+              Value: !Ref SwimIngestKinesisStreamSTDDS
             - Name: AWS_KINESIS_STREAM_JSON
               Value: !Sub StreamJson
             - Name: AWS_KINESIS_STREAM_COMPRESS
@@ -160,8 +198,8 @@ Resources:
               ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/connection_factory_name'
             - Name: SWIM_JMS_QUEUE_NAME
               ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
-      TaskRoleArn: !Ref SwimIngestECSServiceRole
-      ExecutionRoleArn: !Ref SwimIngestECSServiceRole
+      TaskRoleArn: !Ref SwimIngestECSServiceRoleSTDDS
+      ExecutionRoleArn: !Ref SwimIngestECSServiceRoleSTDDS
       Memory: '6 GB'
       Cpu: '1 vCPU'
       Family: !Sub '${AWS::StackName}'
@@ -184,7 +222,7 @@ Resources:
               awslogs-stream-prefix: 'ecs'
           Environment:
             - Name: AWS_KINESIS_STREAM
-              Value: !Ref SwimIngestKinesisStream
+              Value: !Ref SwimIngestKinesisStreamFDPS
             - Name: AWS_KINESIS_STREAM_JSON
               Value: !Sub StreamJson
             - Name: AWS_KINESIS_STREAM_COMPRESS
@@ -204,8 +242,8 @@ Resources:
               ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jms/connection_factory_name'
             - Name: SWIM_JMS_QUEUE_NAME
               ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jms/queue_name'
-      TaskRoleArn: !Ref SwimIngestECSServiceRole
-      ExecutionRoleArn: !Ref SwimIngestECSServiceRole
+      TaskRoleArn: !Ref SwimIngestECSServiceRoleFDPS
+      ExecutionRoleArn: !Ref SwimIngestECSServiceRoleFDPS
       Memory: '6 GB'
       Cpu: '1 vCPU'
       Family: !Sub '${AWS::StackName}'

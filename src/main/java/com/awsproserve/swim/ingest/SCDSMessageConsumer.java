@@ -98,9 +98,9 @@ public class SCDSMessageConsumer implements MessageListener {
 
 				logger.debug("raw message: " + msgTextObj);
 				
-//				if (!streamJson) {
-//					flightRecords.add(msgTextObj);
-//				} else {
+				if (!streamJson) {
+					flightRecords.add(msgTextObj);
+				} else {
 					try {
 						Object element = (Object) xmlToObject(msgTextObj);
 						logger.debug("successful unmarshall! type: " + element.getClass().toGenericString());
@@ -147,7 +147,7 @@ public class SCDSMessageConsumer implements MessageListener {
 //					} catch (JsonProcessingException e) {
 //						logger.error(e.toString());
 //					}
-//				}
+				}
 				
 				if (flightRecords.size() > 0) {
 					List<PutRecordsRequestEntry> kinesisRecords = new ArrayList<PutRecordsRequestEntry>();

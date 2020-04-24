@@ -56,9 +56,6 @@ public class SCDSMessageConsumer implements MessageListener {
 	@Autowired
 	KinesisAsyncClient kinesisClient;
 
-	@Autowired
-	private Jaxb2Marshaller  marshaller;
-
 	@Value("${aws.kinesis.stream}")
 	private String stream;
 

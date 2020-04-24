@@ -293,9 +293,15 @@ Resources:
             
 
 Outputs:
-  KinesisStream:
+  KinesisStreamSTDDS:
     Description: The kinesis stream to be consumed
-    Value: !GetAtt SwimIngestKinesisStream.Arn 
+    Value: !GetAtt SwimIngestKinesisStreamSTDDS.Arn 
     Export:
-      Name: !Sub '${AWS::StackName}-KinesisStream'
+      Name: !Sub '${AWS::StackName}-KinesisStream-stdds'
+
+  KinesisStreamFDPS:
+    Description: The kinesis stream to be consumed
+    Value: !GetAtt SwimIngestKinesisStreamFDPS.Arn 
+    Export:
+      Name: !Sub '${AWS::StackName}-KinesisStream-fdps'
 

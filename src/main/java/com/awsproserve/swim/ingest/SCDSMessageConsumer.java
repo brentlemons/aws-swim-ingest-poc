@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPOutputStream;
 
@@ -15,37 +14,17 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import aero.faa.nas._3.AbstractMessageType;
-import aero.faa.nas._3.FlightMessageType;
-import aero.faa.nas._3.MessageCollectionType;
-import aero.faa.nas._3.NasFlightType;
-import lombok.Data;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
-import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
-import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequestEntry;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
-import us.gov.dot.faa.atm.terminal.entities.v4_0.smes.surfacemovementevent.AsdexMsg;
 
 /**
  * @author lembrent
@@ -66,16 +45,8 @@ public class SCDSMessageConsumer implements MessageListener {
 	private Boolean streamCompress;
 
 	private static final Logger logger = LoggerFactory.getLogger(SCDSMessageConsumer.class);
-    private ObjectMapper mapper;
     
     public SCDSMessageConsumer() {
-		this.mapper = new ObjectMapper();
-		this.mapper.registerModule(new JavaTimeModule());
-		this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);	
-		this.mapper.setSerializationInclusion(Include.NON_NULL);
-		this.mapper.setSerializationInclusion(Include.NON_EMPTY); 
-		logger.info("streamJson: " + streamJson);
-		logger.info("streamCompress: " + streamCompress);
     }
 
 	@Override

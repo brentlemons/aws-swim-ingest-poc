@@ -17,51 +17,7 @@ repositories {
 }
 
 
-task genJaxb {
-    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-    ext.classesDir = "${buildDir}/classes/jaxb"
-    ext.schemaDir = "${projectDir}/src/main/resources/schemas"
-    ext.bindingsDir = "${projectDir}/src/main/resources/schemas/bindings"
-
-    outputs.dir classesDir
-
-    doLast() {
-        project.ant {
-            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-                    classpath: configurations.jaxb.asPath
-            mkdir(dir: sourcesDir)
-            mkdir(dir: classesDir)
-
-            //System.setProperty('javax.xml.accessExternalSchema', 'all')
-            //System.setProperty('javax.xml.accessExternalDTD', 'all')
-            
-            xjc(destdir: sourcesDir) {
-                schema(dir: schemaDir, includes: "**/*.xsd")
-                binding(dir: bindingsDir, includes: "**/*.xjb")
-                produces(dir: sourcesDir, includes: "**/*.java")
-	            arg(value: "-extension")
-	            arg(value: "-nv")
-            }
-
-            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
-                    debugLevel: "lines,vars,source",
-                    classpath: configurations.jaxb.asPath) {
-                src(path: sourcesDir)
-                include(name: "**/*.java")
-                include(name: "*.java")
-            }
-
-            copy(todir: classesDir) {
-                fileset(dir: sourcesDir, erroronmissingdir: false) {
-                    exclude(name: "**/*.java")
-                }
-            }
-        }
-    }
-}
-
 dependencies {
-	implementation 'com.sun.xml.bind:jaxb-xjc:2.2.4'
 	implementation 'org.springframework.boot:spring-boot-starter'
     implementation group: 'org.springframework', name:'spring-jms'
 	implementation group: 'org.springframework', name: 'spring-oxm', version: '5.2.4.RELEASE'
@@ -73,17 +29,12 @@ dependencies {
 
 	implementation group: 'software.amazon.awssdk', name: 'kinesis', version: '2.10.80'
 
-    implementation(files(genJaxb.classesDir).builtBy(genJaxb))
-
-    jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.4'
-
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 }
 
 task buildZip(type: Zip) {
-    from genJaxb
     from compileJava
     from processResources
     into('lib') {

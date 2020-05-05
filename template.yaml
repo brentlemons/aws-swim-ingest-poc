@@ -94,6 +94,12 @@ Resources:
       RetentionPeriodHours: 24 
       ShardCount: 2
 
+  SwimIngestKinesisStreamTFMS: 
+    Type: AWS::Kinesis::Stream 
+    Properties: 
+      RetentionPeriodHours: 24 
+      ShardCount: 2
+
   SwimIngestECSServiceRoleSTDDS:
     Type: AWS::IAM::Role
     Properties:
@@ -157,6 +163,38 @@ Resources:
                 - 'kinesis:PutRecords'
                 Effect: Allow
                 Resource: !GetAtt SwimIngestKinesisStreamFDPS.Arn
+
+  SwimIngestECSServiceRoleTFMS:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: ECSAccessParameters
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'ssm:GetParameters'
+                Effect: Allow
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms*'
+        - PolicyName: ECSWriteKinesis
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'kinesis:PutRecord'
+                - 'kinesis:PutRecords'
+                Effect: Allow
+                Resource: !GetAtt SwimIngestKinesisStreamTFMS.Arn
 
   SwimIngestECSCluster:
     Type: AWS::ECS::Cluster
@@ -249,6 +287,50 @@ Resources:
       Family: !Sub '${AWS::StackName}'
       NetworkMode: 'awsvpc'
 
+  SwimIngestTaskDefinitionTFMS:
+    Type: AWS::ECS::TaskDefinition
+    Properties: 
+      RequiresCompatibilities: 
+        - 'FARGATE'
+      ContainerDefinitions: 
+        - Name: !Join ['-', [!Ref 'AWS::StackName', 'Container', 'TFMS']]
+          Image: !Sub '${ECRRepositoryUri}:${ECRImageTag}'
+          Essential: 'true'
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+              awslogs-group: !Sub '/ecs/${AWS::StackName}-tfms'
+              awslogs-region: !Sub '${AWS::Region}'
+              awslogs-stream-prefix: 'ecs'
+          Environment:
+            - Name: AWS_KINESIS_STREAM
+              Value: !Ref SwimIngestKinesisStreamTFMS
+            - Name: AWS_KINESIS_STREAM_JSON
+              Value: !Sub StreamJson
+            - Name: AWS_KINESIS_STREAM_COMPRESS
+              Value: !Sub StreamCompress
+          Secrets:
+            - Name: SWIM_JNDI_CONTEXT_FACTORY
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/context_factory'
+            - Name: SWIM_JNDI_HOST
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/host'
+            - Name: SWIM_JNDI_PRINCIPAL
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/principal'
+            - Name: SWIM_JNDI_CREDENTIALS
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/credentials'
+            - Name: SWIM_JNDI_VPN
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/vpn'
+            - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jms/connection_factory_name'
+            - Name: SWIM_JMS_QUEUE_NAME
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jms/queue_name'
+      TaskRoleArn: !Ref SwimIngestECSServiceRoleTFMS
+      ExecutionRoleArn: !Ref SwimIngestECSServiceRoleTFMS
+      Memory: '6 GB'
+      Cpu: '1 vCPU'
+      Family: !Sub '${AWS::StackName}'
+      NetworkMode: 'awsvpc'
+
   SwimIngestServiceSTDDS:
     Type: AWS::ECS::Service
     Properties: 
@@ -291,6 +373,27 @@ Resources:
           SecurityGroups: 
             - !Ref SwimSecurityGroup
             
+  SwimIngestServiceTFMS:
+    Type: AWS::ECS::Service
+    Properties: 
+      Cluster: !Ref SwimIngestECSCluster
+      LaunchType: 'FARGATE'
+      TaskDefinition: !Ref SwimIngestTaskDefinitionTFMS
+      ServiceName: !Sub 'aws-swim-ingest-service-tfms'
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      DeploymentController: 
+        Type: 'ECS'
+      NetworkConfiguration: 
+        AwsvpcConfiguration:
+          AssignPublicIp: 'ENABLED'
+          Subnets: 
+            - !Ref PublicSubnet
+          SecurityGroups: 
+            - !Ref SwimSecurityGroup
+            
 
 Outputs:
   KinesisStreamSTDDS:
@@ -304,4 +407,10 @@ Outputs:
     Value: !GetAtt SwimIngestKinesisStreamFDPS.Arn 
     Export:
       Name: !Sub '${AWS::StackName}-KinesisStream-fdps'
+
+  KinesisStreamTFMS:
+    Description: The kinesis stream to be consumed
+    Value: !GetAtt SwimIngestKinesisStreamTFMS.Arn 
+    Export:
+      Name: !Sub '${AWS::StackName}-KinesisStream-tfms'
 

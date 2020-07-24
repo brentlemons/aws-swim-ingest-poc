@@ -121,7 +121,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'
@@ -153,7 +153,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'
@@ -185,7 +185,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'

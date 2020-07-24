@@ -86,19 +86,19 @@ Resources:
     Type: AWS::Kinesis::Stream 
     Properties: 
       RetentionPeriodHours: 24
-      ShardCount: 2
+      ShardCount: 1
 
   SwimIngestKinesisStreamFDPS: 
     Type: AWS::Kinesis::Stream 
     Properties: 
       RetentionPeriodHours: 24 
-      ShardCount: 2
+      ShardCount: 1
 
   SwimIngestKinesisStreamTFMS: 
     Type: AWS::Kinesis::Stream 
     Properties: 
       RetentionPeriodHours: 24 
-      ShardCount: 2
+      ShardCount: 1
 
   SwimIngestECSServiceRoleSTDDS:
     Type: AWS::IAM::Role
@@ -121,7 +121,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'
@@ -153,7 +153,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'
@@ -185,7 +185,7 @@ Resources:
               - Action:
                 - 'ssm:GetParameters'
                 Effect: Allow
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms*'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms*'
         - PolicyName: ECSWriteKinesis
           PolicyDocument:
             Version: '2012-10-17'
@@ -223,23 +223,23 @@ Resources:
               Value: !Sub StreamCompress
           Secrets:
             - Name: SWIM_JNDI_CONTEXT_FACTORY
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/context_factory'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jndi/context_factory'
             - Name: SWIM_JNDI_HOST
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/host'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jndi/host'
             - Name: SWIM_JNDI_PRINCIPAL
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/principal'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jndi/principal'
             - Name: SWIM_JNDI_CREDENTIALS
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/credentials'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jndi/credentials'
             - Name: SWIM_JNDI_VPN
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jndi/vpn'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jndi/vpn'
             - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/connection_factory_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jms/connection_factory_name'
             - Name: SWIM_JMS_QUEUE_NAME
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/stdds/smes/jms/queue_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/stdds/smes/jms/queue_name'
       TaskRoleArn: !Ref SwimIngestECSServiceRoleSTDDS
       ExecutionRoleArn: !Ref SwimIngestECSServiceRoleSTDDS
-      Memory: '6 GB'
-      Cpu: '1 vCPU'
+      Memory: '1 GB'
+      Cpu: '0.25 vCPU'
       Family: !Sub '${AWS::StackName}'
       NetworkMode: 'awsvpc'
 
@@ -267,23 +267,23 @@ Resources:
               Value: !Sub StreamCompress
           Secrets:
             - Name: SWIM_JNDI_CONTEXT_FACTORY
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/context_factory'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jndi/context_factory'
             - Name: SWIM_JNDI_HOST
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/host'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jndi/host'
             - Name: SWIM_JNDI_PRINCIPAL
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/principal'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jndi/principal'
             - Name: SWIM_JNDI_CREDENTIALS
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/credentials'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jndi/credentials'
             - Name: SWIM_JNDI_VPN
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jndi/vpn'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jndi/vpn'
             - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jms/connection_factory_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jms/connection_factory_name'
             - Name: SWIM_JMS_QUEUE_NAME
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/fdps/jms/queue_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/fdps/jms/queue_name'
       TaskRoleArn: !Ref SwimIngestECSServiceRoleFDPS
       ExecutionRoleArn: !Ref SwimIngestECSServiceRoleFDPS
-      Memory: '6 GB'
-      Cpu: '1 vCPU'
+      Memory: '1 GB'
+      Cpu: '0.25 vCPU'
       Family: !Sub '${AWS::StackName}'
       NetworkMode: 'awsvpc'
 
@@ -311,23 +311,23 @@ Resources:
               Value: !Sub StreamCompress
           Secrets:
             - Name: SWIM_JNDI_CONTEXT_FACTORY
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/context_factory'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jndi/context_factory'
             - Name: SWIM_JNDI_HOST
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/host'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jndi/host'
             - Name: SWIM_JNDI_PRINCIPAL
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/principal'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jndi/principal'
             - Name: SWIM_JNDI_CREDENTIALS
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/credentials'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jndi/credentials'
             - Name: SWIM_JNDI_VPN
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jndi/vpn'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jndi/vpn'
             - Name: SWIM_JMS_CONNECTION_FACTORY_NAME
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jms/connection_factory_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jms/connection_factory_name'
             - Name: SWIM_JMS_QUEUE_NAME
-              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/poc/swim/tfms/jms/queue_name'
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/swim/tfms/jms/queue_name'
       TaskRoleArn: !Ref SwimIngestECSServiceRoleTFMS
       ExecutionRoleArn: !Ref SwimIngestECSServiceRoleTFMS
-      Memory: '6 GB'
-      Cpu: '1 vCPU'
+      Memory: '1 GB'
+      Cpu: '0.25 vCPU'
       Family: !Sub '${AWS::StackName}'
       NetworkMode: 'awsvpc'
 
@@ -337,7 +337,7 @@ Resources:
       Cluster: !Ref SwimIngestECSCluster
       LaunchType: 'FARGATE'
       TaskDefinition: !Ref SwimIngestTaskDefinitionSTDDS
-      ServiceName: !Sub 'aws-swim-ingest-service-stdds'
+      ServiceName: !Sub 'swim-ingest-service-stdds'
       DesiredCount: 1
       DeploymentConfiguration:
         MaximumPercent: 200
@@ -358,7 +358,7 @@ Resources:
       Cluster: !Ref SwimIngestECSCluster
       LaunchType: 'FARGATE'
       TaskDefinition: !Ref SwimIngestTaskDefinitionFDPS
-      ServiceName: !Sub 'aws-swim-ingest-service-fdps'
+      ServiceName: !Sub 'swim-ingest-service-fdps'
       DesiredCount: 1
       DeploymentConfiguration:
         MaximumPercent: 200
@@ -379,7 +379,7 @@ Resources:
       Cluster: !Ref SwimIngestECSCluster
       LaunchType: 'FARGATE'
       TaskDefinition: !Ref SwimIngestTaskDefinitionTFMS
-      ServiceName: !Sub 'aws-swim-ingest-service-tfms'
+      ServiceName: !Sub 'swim-ingest-service-tfms'
       DesiredCount: 1
       DeploymentConfiguration:
         MaximumPercent: 200

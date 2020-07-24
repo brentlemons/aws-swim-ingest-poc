@@ -24,7 +24,8 @@ Resources:
 
   ArtifactBucket:
     Type: AWS::S3::Bucket
-
+    DeletionPolicy: Retain
+    
   IamRoles:
     Type: AWS::CloudFormation::Stack
     Properties:
